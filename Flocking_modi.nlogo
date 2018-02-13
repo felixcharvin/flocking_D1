@@ -14,6 +14,14 @@ to setup
       set size 1.5  ;; easier to see
       setxy random-xcor random-ycor
       set flockmates no-turtles ]
+;  ask turtle 0 [
+;    set heading 0
+;    setxy 0 -10
+;  ]
+;  ask turtle 1 [
+;    set heading 180
+;    setxy 0 10
+;  ]
   reset-ticks
 end
 
@@ -41,8 +49,7 @@ to vector_move
   let x item 0 align_var * alignmentWeight + item 0 cohere_var * cohesionWeight + item 0 separate_var * separationWeight
   let y item 1 align_var * alignmentWeight + item 1 cohere_var * cohesionWeight + item 1 separate_var * separationWeight
   if x != 0 and y != 0 [
-
-    turn-towards (heading - atan x y + 90) max-align-turn
+    turn-towards (atan x y - heading) max-align-turn
     ;;set heading (atan 1 1)
   ]
 end
@@ -71,8 +78,8 @@ end
 ;;; ALIGN
 
 to align  ;; turtle procedure
-  let x-component mean [cos (towards myself + 180)] of flockmates
-  let y-component mean [sin (towards myself + 180)] of flockmates
+  let x-component sum [cos (90 + heading)] of flockmates
+  let y-component sum [sin (90 + heading)] of flockmates
   let norme sqrt (x-component * x-component + y-component * y-component)
   ifelse norme != 0 [
     set align_var (list (x-component / norme) (y-component / norme))
@@ -144,11 +151,11 @@ end
 GRAPHICS-WINDOW
 250
 10
-888
-649
+906
+667
 -1
 -1
-30.0
+8.0
 1
 10
 1
@@ -158,10 +165,10 @@ GRAPHICS-WINDOW
 1
 1
 1
--10
-10
--10
-10
+-40
+40
+-40
+40
 1
 1
 1
@@ -226,7 +233,7 @@ max-align-turn
 max-align-turn
 0.0
 20.0
-16.75
+3.0
 0.25
 1
 degrees
@@ -270,8 +277,8 @@ SLIDER
 vision
 vision
 0.0
-10.0
-10.0
+20
+20.0
 0.5
 1
 patches
@@ -286,7 +293,7 @@ minimum-separation
 minimum-separation
 0.0
 5.0
-2.25
+2.5
 0.25
 1
 patches
