@@ -162,8 +162,8 @@ GRAPHICS-WINDOW
 10
 -10
 10
-1
-1
+0
+0
 1
 ticks
 30.0
@@ -211,7 +211,7 @@ population
 population
 1.0
 1000.0
-2.0
+1.0
 1.0
 1
 NIL
