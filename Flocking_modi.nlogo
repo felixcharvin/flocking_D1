@@ -16,11 +16,11 @@ to setup
       set flockmates no-turtles ]
 ;  ask turtle 0 [
 ;    set heading 0
-;    setxy 0 -10
+;    setxy 2 -10
 ;  ]
 ;  ask turtle 1 [
 ;    set heading 180
-;    setxy 0 10
+;    setxy -2 10
 ;  ]
   reset-ticks
 end
@@ -49,7 +49,7 @@ to vector_move
   let x item 0 align_var * alignmentWeight + item 0 cohere_var * cohesionWeight + item 0 separate_var * separationWeight
   let y item 1 align_var * alignmentWeight + item 1 cohere_var * cohesionWeight + item 1 separate_var * separationWeight
   if x != 0 and y != 0 [
-    turn-towards (atan x y - heading) max-align-turn
+    turn-towards (atan x y) max-align-turn
     ;;set heading (atan 1 1)
   ]
 end
@@ -78,8 +78,8 @@ end
 ;;; ALIGN
 
 to align  ;; turtle procedure
-  let x-component sum [cos (90 + heading)] of flockmates
-  let y-component sum [sin (90 + heading)] of flockmates
+  let x-component mean [cos (90 - heading)] of flockmates
+  let y-component mean [sin (90 - heading)] of flockmates
   let norme sqrt (x-component * x-component + y-component * y-component)
   ifelse norme != 0 [
     set align_var (list (x-component / norme) (y-component / norme))
@@ -218,7 +218,7 @@ population
 population
 1.0
 1000.0
-2.0
+184.0
 1.0
 1
 NIL
@@ -233,7 +233,7 @@ max-align-turn
 max-align-turn
 0.0
 20.0
-3.0
+6.5
 0.25
 1
 degrees
@@ -278,7 +278,7 @@ vision
 vision
 0.0
 20
-20.0
+11.5
 0.5
 1
 patches
