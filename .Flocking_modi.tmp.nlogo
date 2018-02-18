@@ -286,7 +286,7 @@ minimum-separation
 minimum-separation
 0.0
 5.0
-2.5
+5.0
 0.25
 1
 patches
@@ -316,7 +316,7 @@ cohesionWeight
 cohesionWeight
 0
 10
-0.0
+1.0
 1
 1
 NIL
