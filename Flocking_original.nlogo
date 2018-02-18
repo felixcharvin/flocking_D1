@@ -29,9 +29,9 @@ to flock  ;; turtle procedure
   if any? flockmates
     [ find-nearest-neighbor
       ifelse distance nearest-neighbor < minimum-separation
-        [ separate ]
+        [] ;;[ separate ]
         [ align
-          cohere ] ]
+  ]] ;;cohere ] ]
 end
 
 to find-flockmates  ;; turtle procedure

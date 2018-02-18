@@ -65,8 +65,8 @@ end
 ;;; SEPARATE
 
 to separate  ;; turtle procedure
-  let x-component (sum [dx - [dx] of myself] of flockmates) * -1
-  let y-component (sum [dy - [dy] of myself] of flockmates) * -1
+  let x-component (sum [xcor - [xcor] of myself] of flockmates) * -1
+  let y-component (sum [ycor - [ycor] of myself] of flockmates) * -1
   let norme sqrt (x-component * x-component + y-component * y-component)
    ifelse norme != 0 [
     set separate_var (list (x-component / norme) (y-component / norme))
@@ -88,22 +88,11 @@ to align  ;; turtle procedure
   ;;turn-towards average-flockmate-heading max-align-turn
 end
 
-to-report average-flockmate-heading  ;; turtle procedure
-  ;; We can't just average the heading variables here.
-  ;; For example, the average of 1 and 359 should be 0,
-  ;; not 180.  So we have to use trigonometry.
-  let x-component sum [dx] of flockmates
-  let y-component sum [dy] of flockmates
-  ifelse x-component = 0 and y-component = 0
-    [ report heading ]
-    [ report atan x-component y-component ]
-end
-
 ;;; COHERE
 
 to cohere  ;; turtle procedure
-  let x-component (mean [dx] of flockmates) - dx
-  let y-component (mean [dy] of flockmates) - dy
+  let x-component (mean [xcor] of flockmates) - xcor
+  let y-component (mean [ycor] of flockmates) - ycor
   let norme sqrt (x-component * x-component + y-component * y-component)
    ifelse norme != 0 [
     set cohere_var (list (x-component / norme) (y-component / norme))
@@ -113,26 +102,12 @@ to cohere  ;; turtle procedure
 end
 
 
-to-report average-heading-towards-flockmates  ;; turtle procedure
-  ;; "towards myself" gives us the heading from the other turtle
-  ;; to me, but we want the heading from me to the other turtle,
-  ;; so we add 180
-  let x-component mean [sin (towards myself + 180)] of flockmates
-  let y-component mean [cos (towards myself + 180)] of flockmates
-  ifelse x-component = 0 and y-component = 0
-    [ report heading ]
-    [ report atan x-component y-component ]
-end
-
 ;;; HELPER PROCEDURES
 
 to turn-towards [new-heading max-turn]  ;; turtle procedure
   turn-at-most (subtract-headings new-heading heading) max-turn
 end
 
-to turn-away [new-heading max-turn]  ;; turtle procedure
-  turn-at-most (subtract-headings heading new-heading) max-turn
-end
 
 ;; turn right by "turn" degrees (or left if "turn" is negative),
 ;; but never turn more than "max-turn" degrees
@@ -308,7 +283,7 @@ alignmentWeight
 alignmentWeight
 0
 10
-7.0
+1.0
 1
 1
 NIL
@@ -338,7 +313,7 @@ separationWeight
 separationWeight
 0
 10
-0.0
+1.0
 1
 1
 NIL
