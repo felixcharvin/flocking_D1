@@ -1,10 +1,15 @@
 turtles-own [
   flockmates         ;; agentset of nearby turtles
+  patchmates
   nearest-neighbor   ;; closest one of our flockmates
   align_var
   cohere_var
   separate_var
   velocity
+]
+
+patches-own [
+  obj
 ]
 
 to setup
@@ -14,6 +19,9 @@ to setup
       set size 1.5  ;; easier to see
       setxy random-xcor random-ycor
       set flockmates no-turtles ]
+  ask patches [
+    set obj false
+  ]
 ;  ask turtle 0 [
 ;    set heading 0
 ;    setxy 2 -10
@@ -26,7 +34,16 @@ to setup
 end
 
 to go
-  ask turtles [ flock ]
+  ask turtles [
+    flock
+    get_obj
+  ]
+  if random 100 < spawn_obj [
+    ask one-of patches [
+      set pcolor green
+      set obj true
+    ]
+  ]
   ;; the following line is used to make the turtles
   ;; animate more smoothly.
   repeat 1 [ ask turtles [ fd 0.2 ] display ]
@@ -38,12 +55,22 @@ end
 
 to flock  ;; turtle procedure
   find-flockmates
+  find-patchmates
   if any? flockmates
     [ vector_move ]
 end
 
 to vector_move
-  align
+  let found false
+  let new_dir (list (0) (0))
+  ask patchmates [
+    if obj [
+      set new_dir (vector-normalize(list (pxcor - [xcor] of myself) (pycor - [ycor] of myself)))
+      set found true
+      stop
+    ]
+  ]
+  ifelse found [set align_var new_dir] [align]
   cohere
   separate
   let x item 0 align_var * alignmentWeight + item 0 cohere_var * cohesionWeight + item 0 separate_var * separationWeight
@@ -56,6 +83,10 @@ end
 
 to find-flockmates  ;; turtle procedure
   set flockmates other turtles in-radius vision
+end
+
+to find-patchmates  ;; turtle procedure
+  set patchmates patches in-radius vision_obj
 end
 
 to find-nearest-neighbor ;; turtle procedure
@@ -118,6 +149,15 @@ to turn-at-most [turn max-turn]  ;; turtle procedure
         [ rt max-turn ]
         [ lt max-turn ] ]
     [ rt turn ]
+end
+
+to get_obj
+  ask patchmates[
+    if distance myself < 0.5 [
+      set pcolor black
+      set obj false
+    ]
+  ]
 end
 
 to-report vector-add [v1 v2]
@@ -211,7 +251,7 @@ population
 population
 1.0
 1000.0
-184.0
+126.0
 1.0
 1
 NIL
@@ -271,7 +311,7 @@ vision
 vision
 0.0
 20
-10.0
+11.0
 0.5
 1
 patches
@@ -285,8 +325,8 @@ SLIDER
 minimum-separation
 minimum-separation
 0.0
-5.0
-2.5
+10
+9.25
 0.25
 1
 patches
@@ -316,7 +356,7 @@ cohesionWeight
 cohesionWeight
 0
 10
-0.0
+1.0
 1
 1
 NIL
@@ -331,7 +371,37 @@ separationWeight
 separationWeight
 0
 10
-1.0
+2.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+10
+459
+229
+492
+vision_obj
+vision_obj
+1
+20
+3.0
+0.5
+1
+patches
+HORIZONTAL
+
+SLIDER
+18
+523
+190
+556
+spawn_obj
+spawn_obj
+0
+100
+75.0
 1
 1
 NIL
