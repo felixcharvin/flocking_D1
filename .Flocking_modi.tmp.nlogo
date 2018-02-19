@@ -3,21 +3,17 @@ breed [gravitations gravitation]
 turtles-own [
   flockmates         ;; agentset of nearby turtles
   patchmates
-  pickups
   nearest-neighbor   ;; closest one of our flockmates
   align_var
   cohere_var
   separate_var
   velocity
-  color_obj
   king
 ]
 
 
 patches-own [
   obj
-  house
-  nb_stored
 ]
 
 to setup
@@ -31,7 +27,6 @@ to setup
   ]
   ask patches [
     set obj false
-    set house false
   ]
   create-gravitations 1
   [
@@ -57,35 +52,6 @@ to setup
   reset-ticks
 end
 
-to setup_pickup
-  clear-all
-  create-turtles population
-    [ set color yellow - 2 + random 7  ;; random shades look nice
-      set size 1.5  ;; easier to see
-      setxy random-xcor random-ycor
-      set flockmates no-turtles
-      set color_obj black
-  ]
-  ask patches [
-    set obj false
-    set house false
-    set nb_stored 0
-  ]
-  repeat nb_obj [
-    ask one-of patches [
-      set pcolor green
-      set house false
-      set obj true
-    ]
-  ]
-  ask one-of patches [
-      set pcolor red
-      set obj false
-      set house true
-    ]
-  reset-ticks
-end
-
 to go_objets
   ask turtles [
     flock_objets
@@ -96,21 +62,6 @@ to go_objets
       set pcolor green
       set obj true
     ]
-  ]
-  ;; the following line is used to make the turtles
-  ;; animate more smoothly.
-  repeat 1 [ ask turtles [ fd 0.2 ] display ]
-  ;; for greater efficiency, at the expense of smooth
-  ;; animation, substitute the following line instead:
-  ;;   ask turtles [ fd 1 ]
-  tick
-end
-
-to go_pickups
-  ask turtles [
-    flock_objets
-    get_obj_pickups
-    get_pickups
   ]
   ;; the following line is used to make the turtles
   ;; animate more smoothly.
@@ -272,7 +223,6 @@ end
 to flock_objets  ;; turtle procedure
   find-flockmates
   find-patchmates
-  find-pickups
   if any? flockmates
     [ vector_move_objets ]
 end
@@ -286,20 +236,13 @@ end
 to vector_move_objets
   let found false
   let new_dir (list (0) (0))
-  ifelse (color_obj = 0) [
-    ask patchmates [
-      set new_dir (vector-normalize(list (pxcor - [xcor] of myself) (pycor - [ycor] of myself)))
-      set found true
-      stop
-    ]
-  ] [
-    ask pickups [
+  ask patchmates [
+    if obj [
       set new_dir (vector-normalize(list (pxcor - [xcor] of myself) (pycor - [ycor] of myself)))
       set found true
       stop
     ]
   ]
-
   ifelse found [set align_var new_dir] [align]
   cohere
   separate
@@ -328,11 +271,7 @@ to find-flockmates  ;; turtle procedure
 end
 
 to find-patchmates  ;; turtle procedure
-  set patchmates patches in-radius vision_obj with [(obj = true) and (house = false)]
-end
-
-to find-pickups
-  set pickups patches with [house = true]
+  set patchmates patches in-radius vision_obj
 end
 
 to find-nearest-neighbor ;; turtle procedure
@@ -374,13 +313,13 @@ to cohere  ;; turtle procedure
   ask flockmates [
     let diffx xcor - [xcor] of myself
     let diffy ycor - [ycor] of myself
-    ifelse abs diffx > max-pxcor
+    ifelse abs diffx >= max-pxcor
     [ ifelse diffx < 0
       [ set x-component x-component + ([xcor] of myself + (2 * max-pxcor + diffx)) ]
       [ set x-component x-component + ([xcor] of myself - (2 * max-pxcor - diffx)) ]
     ]
     [ set x-component x-component + xcor ]
-    ifelse abs diffy > max-pycor
+    ifelse abs diffy >= max-pycor
     [ ifelse diffy < 0
       [ set y-component y-component + ([ycor] of myself + (2 * max-pycor + diffy)) ]
       [ set y-component y-component + ([ycor] of myself - (2 * max-pycor - diffy)) ]
@@ -391,7 +330,7 @@ to cohere  ;; turtle procedure
   set y-component (y-component / count flockmates)
   let diffx1 x-component - xcor
   let diffy1 y-component - ycor
-  if abs diffx1 > max-pxcor
+  if abs diffx1 >= max-pxcor
     [ ifelse diffx1 < 0
       [ set x-component (xcor + (2 * max-pxcor + diffx1)) ]
       [ set x-component (xcor - (2 * max-pxcor - diffx1)) ]
@@ -450,31 +389,6 @@ to get_obj
   ]
 end
 
-to get_obj_pickups
-  ask patchmates[
-    if (distance myself < 0.5) and (0 = [color_obj] of myself) [
-      ask myself [
-        set color_obj red
-        set color blue
-      ]
-      set pcolor black
-      set obj false
-    ]
-  ]
-end
-
-to get_pickups
-  ask pickups[
-    if (distance myself < 0.5) and (pcolor = [color_obj] of myself) [
-      set nb_stored (nb_stored + 1)
-      ask myself [
-        set color_obj black
-        set color pink
-      ]
-    ]
-  ]
-end
-
 to-report vector-add [v1 v2]
   report (list (first v1 + first v2) (last v1 + last v2))
 end
@@ -513,11 +427,11 @@ end
 GRAPHICS-WINDOW
 359
 10
-922
-574
+1015
+667
 -1
 -1
-6.852
+8.0
 1
 10
 1
@@ -595,7 +509,7 @@ max-align-turn
 max-align-turn
 0.0
 20.0
-7.25
+15.0
 0.25
 1
 degrees
@@ -610,7 +524,7 @@ max-cohere-turn
 max-cohere-turn
 0.0
 20.0
-1.0
+0.0
 0.25
 1
 degrees
@@ -787,55 +701,6 @@ false
 "" ""
 PENS
 "default" 1.0 0 -16777216 true "" "plot mean [count flockmates] of turtles"
-
-SLIDER
-42
-566
-214
-599
-nb_obj
-nb_obj
-0
-200
-100.0
-1
-1
-NIL
-HORIZONTAL
-
-BUTTON
-245
-204
-349
-237
-NIL
-setup_pickup
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
-251
-253
-344
-286
-NIL
-go_pickups
-T
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-0
 
 @#$#@#$#@
 ## WHAT IS IT?
