@@ -84,7 +84,7 @@ to go_objets_collections
     ]
   ]
 
-   if (nbgen <= 21) and (nbgen >= 20)
+   if (nbgen <= 21) and (nbgen > 20)
        [
          ask patch 20 20 [
       set pcolor green
@@ -108,7 +108,7 @@ to go_objets_collections
     ]
        ]
 
-       if (nbgen <= 41) and (nbgen >= 40)
+       if (nbgen <= 41) and (nbgen > 40)
        [
          ask patch -20 -20 [
       set pcolor green
@@ -131,7 +131,7 @@ to go_objets_collections
       set obj true
     ]
        ]
-       if (nbgen <= 61) and (nbgen >= 60)
+       if (nbgen <= 61) and (nbgen > 60)
        [
          ask patch -20 20 [
       set pcolor green
@@ -155,7 +155,7 @@ to go_objets_collections
     ]
        ]
 
-       if (nbgen <= 81) and (nbgen >= 80)
+       if (nbgen <= 81) and (nbgen > 80)
        [
          ask patch 20 -20 [
       set pcolor green
@@ -417,7 +417,7 @@ population
 population
 1.0
 1000.0
-128.0
+289.0
 1.0
 1
 NIL
@@ -507,7 +507,7 @@ alignmentWeight
 alignmentWeight
 0
 10
-1.0
+3.0
 1
 1
 NIL
@@ -522,7 +522,7 @@ cohesionWeight
 cohesionWeight
 0
 10
-1.0
+0.0
 1
 1
 NIL
@@ -537,7 +537,7 @@ separationWeight
 separationWeight
 0
 10
-1.0
+5.0
 1
 1
 NIL
@@ -552,7 +552,7 @@ vision_obj
 vision_obj
 1
 20
-6.0
+4.5
 0.5
 1
 patches
@@ -606,6 +606,24 @@ NIL
 NIL
 NIL
 0
+
+PLOT
+1109
+87
+1309
+237
+plot 1
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "plot sum [count flockmates] of turtles"
 
 @#$#@#$#@
 ## WHAT IS IT?

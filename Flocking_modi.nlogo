@@ -417,7 +417,7 @@ population
 population
 1.0
 1000.0
-128.0
+289.0
 1.0
 1
 NIL
@@ -507,7 +507,7 @@ alignmentWeight
 alignmentWeight
 0
 10
-1.0
+2.0
 1
 1
 NIL
@@ -552,7 +552,7 @@ vision_obj
 vision_obj
 1
 20
-6.0
+4.5
 0.5
 1
 patches
@@ -606,6 +606,24 @@ NIL
 NIL
 NIL
 0
+
+PLOT
+1064
+38
+1438
+273
+plot 1
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "plot mean [count flockmates] of turtles"
 
 @#$#@#$#@
 ## WHAT IS IT?
