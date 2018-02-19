@@ -1,3 +1,5 @@
+breed [gravitations gravitation]
+
 turtles-own [
   flockmates         ;; agentset of nearby turtles
   patchmates
@@ -6,7 +8,9 @@ turtles-own [
   cohere_var
   separate_var
   velocity
+  king
 ]
+
 
 patches-own [
   obj
@@ -18,10 +22,25 @@ to setup
     [ set color yellow - 2 + random 7  ;; random shades look nice
       set size 1.5  ;; easier to see
       setxy random-xcor random-ycor
-      set flockmates no-turtles ]
+      set flockmates no-turtles
+      set king false
+  ]
   ask patches [
     set obj false
   ]
+  create-gravitations 1
+  [
+    set color red
+    set shape "circle"
+    setxy 50 0
+
+  ]
+  ask one-of turtles
+  [
+   set color blue
+   set king true
+  ]
+  ask turtles [ show king ]
 ;  ask turtle 0 [
 ;    set heading 0
 ;    setxy 2 -10
@@ -296,13 +315,13 @@ to cohere  ;; turtle procedure
     let diffy ycor - [ycor] of myself
     ifelse abs diffx > max-pxcor
     [ ifelse diffx < 0
-      [ set x-component x-component + ([xcor] of myself + (2 * max-pxcor - diffx)) ]
+      [ set x-component x-component + ([xcor] of myself + (2 * max-pxcor + diffx)) ]
       [ set x-component x-component + ([xcor] of myself - (2 * max-pxcor - diffx)) ]
     ]
     [ set x-component x-component + xcor ]
     ifelse abs diffy > max-pycor
     [ ifelse diffy < 0
-      [ set y-component y-component + ([ycor] of myself + (2 * max-pycor - diffy)) ]
+      [ set y-component y-component + ([ycor] of myself + (2 * max-pycor + diffy)) ]
       [ set y-component y-component + ([ycor] of myself - (2 * max-pycor - diffy)) ]
     ]
     [ set y-component y-component + ycor ]
@@ -313,14 +332,23 @@ to cohere  ;; turtle procedure
   let diffy1 y-component - ycor
   if abs diffx1 > max-pxcor
     [ ifelse diffx1 < 0
-      [ set x-component (xcor + (2 * max-pxcor - diffx1)) ]
+      [ set x-component (xcor + (2 * max-pxcor + diffx1)) ]
       [ set x-component (xcor - (2 * max-pxcor - diffx1)) ]
     ]
   if abs diffy1 > max-pycor
     [ ifelse diffy1 < 0
-      [ set y-component (ycor + (2 * max-pycor - diffy1)) ]
+      [ set y-component (ycor + (2 * max-pycor + diffy1)) ]
       [ set y-component (ycor - (2 * max-pycor - diffy1)) ]
     ]
+  if (breed = turtles and [king] of self)
+  [
+    ask gravitations
+    [
+      setxy x-component y-component
+    ]
+  ]
+
+
   set x-component x-component - xcor
   set y-component y-component - ycor
 
@@ -525,8 +553,8 @@ SLIDER
 vision
 vision
 0.0
-20
-11.0
+40
+40.0
 0.5
 1
 patches
