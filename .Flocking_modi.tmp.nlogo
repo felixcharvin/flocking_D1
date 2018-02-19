@@ -607,7 +607,7 @@ alignmentWeight
 alignmentWeight
 0
 10
-1.0
+2.0
 1
 1
 NIL
@@ -622,7 +622,7 @@ cohesionWeight
 cohesionWeight
 0
 10
-1.0
+2.0
 1
 1
 NIL
@@ -758,10 +758,10 @@ NIL
 1
 
 BUTTON
-266
-155
-359
-188
+256
+242
+349
+275
 NIL
 go_pickups
 T
