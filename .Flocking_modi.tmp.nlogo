@@ -318,7 +318,7 @@ to cohere  ;; turtle procedure
     ]
   if abs diffy1 > max-pycor
     [ ifelse diffy1 < 0
-      [ set y-component (ycor + (2 * max-pycor - diffy1)) ]
+      [ set y-component -(ycor + (2 * max-pycor - diffy1)) ]
       [ set y-component (ycor - (2 * max-pycor - diffy1)) ]
     ]
   set x-component x-component - xcor
