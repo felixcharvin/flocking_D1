@@ -331,7 +331,21 @@ to-report vector-add [v1 v2]
 end
 
 to-report vector-sub [v1 v2]
-  report (list (first v1 - first v2) (last v1 - last v2))
+  let size-x (max-pxcor - min-pxcor)
+  let size-y (max-pycor - min-pycor)
+  let x (first v1 - first v2)
+  let y (last v1 - last v2)
+  if abs (first v1 - first v2) > (size-x / 2)
+  [ ifelse x > 0
+    [ set x (x - size-x) ]
+    [ set x (x + size-x) ]
+  ]
+  if abs (last v1 - last v2) > (size-y / 2)
+  [ ifelse y > 0
+    [ set y (y - size-y) ]
+    [ set y (y + size-y) ]
+  ]
+  report (list x y)
 end
 
 to-report vector-div [v1 d]
@@ -417,7 +431,7 @@ population
 population
 1.0
 1000.0
-289.0
+107.0
 1.0
 1
 NIL
@@ -507,7 +521,7 @@ alignmentWeight
 alignmentWeight
 0
 10
-2.0
+1.0
 1
 1
 NIL
@@ -522,7 +536,7 @@ cohesionWeight
 cohesionWeight
 0
 10
-1.0
+0.0
 1
 1
 NIL
