@@ -40,7 +40,6 @@ to setup
    set color blue
    set king true
   ]
-  ask turtles [ show king ]
 ;  ask turtle 0 [
 ;    set heading 0
 ;    setxy 2 -10
@@ -315,14 +314,14 @@ to cohere  ;; turtle procedure
     let diffy ycor - [ycor] of myself
     ifelse abs diffx > max-pxcor
     [ ifelse diffx < 0
-      [ set x-component x-component + ([xcor] of myself + (2 * max-pxcor + diffx)) ]
-      [ set x-component x-component + ([xcor] of myself - (2 * max-pxcor - diffx)) ]
+      [ set x-component x-component + ([xcor] of myself + (2 * max-pxcor + diffx + 1)) ]
+      [ set x-component x-component + ([xcor] of myself - (2 * max-pxcor - diffx + 1)) ]
     ]
     [ set x-component x-component + xcor ]
     ifelse abs diffy > max-pycor
     [ ifelse diffy < 0
-      [ set y-component y-component + ([ycor] of myself + (2 * max-pycor + diffy)) ]
-      [ set y-component y-component + ([ycor] of myself - (2 * max-pycor - diffy)) ]
+      [ set y-component y-component + ([ycor] of myself + (2 * max-pycor + diffy + 1)) ]
+      [ set y-component y-component + ([ycor] of myself - (2 * max-pycor - diffy + 1)) ]
     ]
     [ set y-component y-component + ycor ]
   ]
@@ -332,13 +331,13 @@ to cohere  ;; turtle procedure
   let diffy1 y-component - ycor
   if abs diffx1 > max-pxcor
     [ ifelse diffx1 < 0
-      [ set x-component (xcor + (2 * max-pxcor + diffx1)) ]
-      [ set x-component (xcor - (2 * max-pxcor - diffx1)) ]
+      [ set x-component (xcor + (2 * max-pxcor + diffx1 + 1)) ]
+      [ set x-component (xcor - (2 * max-pxcor - diffx1 + 1)) ]
     ]
   if abs diffy1 > max-pycor
     [ ifelse diffy1 < 0
-      [ set y-component (ycor + (2 * max-pycor + diffy1)) ]
-      [ set y-component (ycor - (2 * max-pycor - diffy1)) ]
+      [ set y-component (ycor + (2 * max-pycor + diffy1 + 1)) ]
+      [ set y-component (ycor - (2 * max-pycor - diffy1 + 1)) ]
     ]
   if (breed = turtles and [king] of self)
   [
@@ -554,7 +553,7 @@ vision
 vision
 0.0
 40
-40.0
+15.0
 0.5
 1
 patches
@@ -584,7 +583,7 @@ alignmentWeight
 alignmentWeight
 0
 10
-1.0
+4.0
 1
 1
 NIL
@@ -614,7 +613,7 @@ separationWeight
 separationWeight
 0
 10
-1.0
+3.0
 1
 1
 NIL
