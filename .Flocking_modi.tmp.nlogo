@@ -33,12 +33,12 @@ to setup
   reset-ticks
 end
 
-to go
+to go_objets
   ask turtles [
-    flock
+    flock_objets
     get_obj
   ]
-  if random 100 < 5 [
+  if random 100 < spawn_obj [
     ask one-of patches [
       set pcolor green
       set obj true
@@ -53,14 +53,168 @@ to go
   tick
 end
 
-to flock  ;; turtle procedure
+to go_objets_collections
+  ask turtles [
+    flock_objets
+    get_obj
+  ]
+
+  let nbgen random 100
+  if nbgen < 1
+  [
+    ask patch 0 0 [
+      set pcolor green
+      set obj true
+    ]
+    ask patch -2 -2 [
+      set pcolor green
+      set obj true
+    ]
+    ask patch 2 2 [
+      set pcolor green
+      set obj true
+    ]
+    ask patch -2 2 [
+      set pcolor green
+      set obj true
+    ]
+    ask patch 2 -2 [
+      set pcolor green
+      set obj true
+    ]
+  ]
+
+   if (nbgen <= 21) and (nbgen >= 20)
+       [
+         ask patch 20 20 [
+      set pcolor green
+      set obj true
+    ]
+    ask patch 18 18 [
+      set pcolor green
+      set obj true
+    ]
+    ask patch 22 22 [
+      set pcolor green
+      set obj true
+    ]
+    ask patch 18 22 [
+      set pcolor green
+      set obj true
+    ]
+    ask patch 22 18 [
+      set pcolor green
+      set obj true
+    ]
+       ]
+
+       if (nbgen <= 41) and (nbgen >= 40)
+       [
+         ask patch -20 -20 [
+      set pcolor green
+      set obj true
+    ]
+    ask patch -18 -18 [
+      set pcolor green
+      set obj true
+    ]
+    ask patch -22 -22 [
+      set pcolor green
+      set obj true
+    ]
+    ask patch -18 -22 [
+      set pcolor green
+      set obj true
+    ]
+    ask patch -22 -18 [
+      set pcolor green
+      set obj true
+    ]
+       ]
+       if (nbgen <= 61) and (nbgen >= 60)
+       [
+         ask patch -20 20 [
+      set pcolor green
+      set obj true
+    ]
+    ask patch -18 18 [
+      set pcolor green
+      set obj true
+    ]
+    ask patch -22 22 [
+      set pcolor green
+      set obj true
+    ]
+    ask patch -18 22 [
+      set pcolor green
+      set obj true
+    ]
+    ask patch -22 18 [
+      set pcolor green
+      set obj true
+    ]
+       ]
+
+       if (nbgen <= 81) and (nbgen >= 80)
+       [
+         ask patch 20 -20 [
+      set pcolor green
+      set obj true
+    ]
+    ask patch 18 -18 [
+      set pcolor green
+      set obj true
+    ]
+    ask patch 22 -22 [
+      set pcolor green
+      set obj true
+    ]
+    ask patch 18 -22 [
+      set pcolor green
+      set obj true
+    ]
+    ask patch 22 -18 [
+      set pcolor green
+      set obj true
+    ]
+       ]
+
+  ;; the following line is used to make the turtles
+  ;; animate more smoothly.
+  repeat 1 [ ask turtles [ fd 0.2 ] display ]
+  ;; for greater efficiency, at the expense of smooth
+  ;; animation, substitute the following line instead:
+  ;;   ask turtles [ fd 1 ]
+  tick
+end
+
+to go
+  ask turtles [
+    flock
+  ]
+  ;; the following line is used to make the turtles
+  ;; animate more smoothly.
+  repeat 1 [ ask turtles [ fd 0.2 ] display ]
+  ;; for greater efficiency, at the expense of smooth
+  ;; animation, substitute the following line instead:
+  ;;   ask turtles [ fd 1 ]
+  tick
+end
+
+to flock_objets  ;; turtle procedure
   find-flockmates
   find-patchmates
+  if any? flockmates
+    [ vector_move_objets ]
+end
+
+to flock  ;; turtle procedure
+  find-flockmates
   if any? flockmates
     [ vector_move ]
 end
 
-to vector_move
+to vector_move_objets
   let found false
   let new_dir (list (0) (0))
   ask patchmates [
@@ -71,6 +225,18 @@ to vector_move
     ]
   ]
   ifelse found [set align_var new_dir] [align]
+  cohere
+  separate
+  let x item 0 align_var * alignmentWeight + item 0 cohere_var * cohesionWeight + item 0 separate_var * separationWeight
+  let y item 1 align_var * alignmentWeight + item 1 cohere_var * cohesionWeight + item 1 separate_var * separationWeight
+  if x != 0 and y != 0 [
+    turn-towards (atan x y) max-align-turn
+    ;;set heading (atan 1 1)
+  ]
+end
+
+to vector_move
+  align
   cohere
   separate
   let x item 0 align_var * alignmentWeight + item 0 cohere_var * cohesionWeight + item 0 separate_var * separationWeight
@@ -182,9 +348,9 @@ end
 ; See Info tab for full copyright and license.
 @#$#@#$#@
 GRAPHICS-WINDOW
-250
+359
 10
-906
+1015
 667
 -1
 -1
@@ -208,26 +374,11 @@ GRAPHICS-WINDOW
 ticks
 30.0
 
-SLIDER
-0
-0
-0
-0
-NIL
-NIL
-0
-100
-50.0
-1
-1
-NIL
-HORIZONTAL
-
 BUTTON
-39
-93
-116
-126
+24
+56
+101
+89
 NIL
 setup
 NIL
@@ -241,10 +392,10 @@ NIL
 1
 
 BUTTON
-122
-93
-203
-126
+138
+55
+219
+88
 NIL
 go
 T
@@ -258,15 +409,15 @@ NIL
 0
 
 SLIDER
-9
-51
-232
-84
+10
+10
+233
+43
 population
 population
 1.0
 1000.0
-126.0
+128.0
 1.0
 1
 NIL
@@ -318,10 +469,10 @@ degrees
 HORIZONTAL
 
 SLIDER
-9
-135
-232
-168
+14
+150
+237
+183
 vision
 vision
 0.0
@@ -333,10 +484,10 @@ patches
 HORIZONTAL
 
 SLIDER
-9
-169
-232
-202
+12
+183
+235
+216
 minimum-separation
 minimum-separation
 0.0
@@ -386,7 +537,7 @@ separationWeight
 separationWeight
 0
 10
-2.0
+1.0
 1
 1
 NIL
@@ -401,11 +552,60 @@ vision_obj
 vision_obj
 1
 20
-3.0
+6.0
 0.5
 1
 patches
 HORIZONTAL
+
+SLIDER
+18
+523
+190
+556
+spawn_obj
+spawn_obj
+0
+100
+59.0
+1
+1
+NIL
+HORIZONTAL
+
+BUTTON
+109
+101
+196
+134
+NIL
+go_objets
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+0
+
+BUTTON
+200
+100
+350
+133
+NIL
+go_objets_collections
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+0
 
 @#$#@#$#@
 ## WHAT IS IT?
