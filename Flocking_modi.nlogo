@@ -656,7 +656,7 @@ alignmentWeight
 alignmentWeight
 0
 10
-3.0
+10.0
 1
 1
 NIL
@@ -671,7 +671,7 @@ cohesionWeight
 cohesionWeight
 0
 10
-2.0
+1.0
 1
 1
 NIL
@@ -686,7 +686,7 @@ separationWeight
 separationWeight
 0
 10
-4.0
+1.0
 1
 1
 NIL
@@ -723,7 +723,7 @@ true
 false
 "" ""
 PENS
-"default" 1.0 0 -16777216 true "" "let coeff1 0\nlet coeff2 0\nask robots [\nif count flockmates > 0 [\n  let mean-sin mean [sin heading] of flockmates\n  let mean-cos mean [cos heading] of flockmates\n  set coeff1 coeff1 + 1 / (1 + abs (heading - (atan mean-sin mean-cos)))\n]\nset coeff2 coeff2 + count robots in-radius (0.5 * minimum-separation) * (count robots - count robots in-radius (0.8 * minimum-separation))\n]\nset coeff1 (coeff1 / count robots)\nset coeff2 (coeff2 / count robots)\nplot 100 * coeff1 * coeff2"
+"default" 1.0 0 -16777216 true "" "let coef-align 0\nlet coef-neighbour 0\nask robots [\nif count flockmates > 0 [\n  let mean-sin mean [sin heading] of flockmates\n  let mean-cos mean [cos heading] of flockmates\n  set coef-align coef-align + 1 / (1 + abs (heading - (atan mean-sin mean-cos)))\n]\nset coef-neighbour coef-neighbour + (count flockmates) * (count robots - count flockmates)\n]\nset coef-align (coef-align / count robots)\nset coef-neighbour (coef-neighbour / count robots)\nplot coef-align * coef-neighbour"
 
 SLIDER
 12
@@ -807,7 +807,7 @@ SWITCH
 77
 enable_warehouses
 enable_warehouses
-0
+1
 1
 -1000
 
@@ -818,7 +818,7 @@ SWITCH
 111
 center_of_gravity
 center_of_gravity
-0
+1
 1
 -1000
 
@@ -874,7 +874,7 @@ obstacle_number
 obstacle_number
 0
 5
-5.0
+0.0
 1
 1
 NIL
