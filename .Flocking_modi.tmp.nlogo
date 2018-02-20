@@ -130,11 +130,10 @@ to go
   [
     ;;Check if wharehouses are already created
     ifelse pickup_on [
-      show pickup_on
     ]
     ;; if not, we create them
     [
-      show "spawn warehouses"
+
       spawn-warehouses
       set pickup_on true
     ]
