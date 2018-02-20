@@ -223,6 +223,8 @@ to flock_objets  ;; turtle procedure
     [ vector_move_objets ]
 end
 
+
+
 ;; regroup 3 force align, cohere, sperate to create flocking force and give direction to robots
 to vector_move_objets
   let found false
@@ -253,6 +255,27 @@ to vector_move_objets
     ifelse any? colorFlockmates [align] [set align_var (list (0) (0))]
   ]
   ifelse any? colorFlockmates [cohere] [set cohere_var (list (0) (0))]
+  separate
+  let x item 0 align_var * alignmentWeight + item 0 cohere_var * cohesionWeight + item 0 separate_var * separationWeight
+  let y item 1 align_var * alignmentWeight + item 1 cohere_var * cohesionWeight + item 1 separate_var * separationWeight
+  if x != 0 and y != 0 [
+    turn-towards (atan x y) max-align-turn
+    ;;set heading (atan 1 1)
+  ]
+end
+
+to vector_move
+  let found false
+  let new_dir (list (0) (0))
+  if (gasBool) and (gas_tank < 600) [
+    ask gasStations [
+      set new_dir (vector-normalize(list (pxcor - [xcor] of myself) (pycor - [ycor] of myself)))
+      set found true
+      stop
+    ]
+  ]
+  ifelse found [set align_var new_dir] [align]
+  cohere
   separate
   let x item 0 align_var * alignmentWeight + item 0 cohere_var * cohesionWeight + item 0 separate_var * separationWeight
   let y item 1 align_var * alignmentWeight + item 1 cohere_var * cohesionWeight + item 1 separate_var * separationWeight
