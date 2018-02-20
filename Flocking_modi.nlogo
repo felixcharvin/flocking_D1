@@ -92,11 +92,12 @@ to spawn_obj
   [
     spawn-collection_obj
   ]
-  []
-  repeat nb_obj [
-    ask one-of patches [
-      set pcolor one-of color_list
-      set obj true
+  [
+    repeat nb_obj [
+      ask one-of patches [
+        set pcolor one-of color_list
+        set obj true
+      ]
     ]
   ]
 end
@@ -748,7 +749,7 @@ SWITCH
 520
 group_objects
 group_objects
-1
+0
 1
 -1000
 
@@ -798,7 +799,7 @@ differents_objects
 differents_objects
 1
 5
-3.0
+5.0
 1
 1
 NIL
