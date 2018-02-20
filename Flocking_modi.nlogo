@@ -687,11 +687,7 @@ max-align-turn
 max-align-turn
 0.0
 20.0
-<<<<<<< HEAD
-8.75
-=======
 11.25
->>>>>>> 508c56295115a592af411f73fd25395f81778c20
 0.25
 1
 degrees
@@ -781,11 +777,7 @@ vision_obj
 vision_obj
 1
 20
-<<<<<<< HEAD
-18.0
-=======
 11.0
->>>>>>> 508c56295115a592af411f73fd25395f81778c20
 0.5
 1
 patches
