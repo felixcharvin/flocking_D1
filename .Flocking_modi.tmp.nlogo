@@ -88,6 +88,7 @@ to spawn_obj
     set color_list remove-item (i - 1) color_list
     set i (i - 1)
   ]
+
   repeat nb_obj [
     ask one-of patches [
       set pcolor one-of color_list
@@ -95,6 +96,33 @@ to spawn_obj
     ]
   ]
 end
+
+;;Create collection of objects
+to spawn-collection_obj
+  let color_list [blue red green magenta orange]
+  let i 5
+  while [i != differents_objects] [
+    set color_list remove-item (i - 1) color_list
+    set i (i - 1)
+  ]
+  let pos_coll [[[0 0] [-2 -2] [2 2] [-2 2] [2 -2]]
+    [[20 20] [18 18] [22 22] [18 22] [22 18]]
+    [[-20 -20] [-18 -18] [-22 -22] [-18 -22] [-22 -18]]
+    [[-20 20] [-18 18] [-22 22] [-18 22] [-22 18]]
+    [[20 -20] [18 -18] [22 -22] [18 -22] [22 -18]]]
+
+  foreach pos_coll [ x ->
+    let color_coll one-of color_list
+    foreach x [ y ->
+      ask patch first(y) last(y) [
+        set pcolor color_coll
+        set obj true
+      ]
+    ]
+  ]
+
+end
+
 
 ;; create warehouses taht collect objects
 to spawn-warehouses
@@ -130,10 +158,11 @@ to go
   [
     ;;Check if wharehouses are already created
     ifelse pickup_on [
+      show pickup_on
     ]
     ;; if not, we create them
     [
-
+      show "spawn warehouses"
       spawn-warehouses
       set pickup_on true
     ]
@@ -173,150 +202,6 @@ to go
   tick
 end
 
-
-to go_objets_collections
-  ask robots [
-    flock_objets
-    get_obj
-    if (gasBool) [
-      set gas_tank (gas_tank - 1)
-      if (gas_tank < 0) [
-        die
-      ]
-      if (gas_tank < 600) [
-        get_gas
-      ]
-    ]
-  ]
-
-  let nbgen random 100
-  if nbgen < 1
-  [
-    ask patch 0 0 [
-      set pcolor green
-      set obj true
-    ]
-    ask patch -2 -2 [
-      set pcolor green
-      set obj true
-    ]
-    ask patch 2 2 [
-      set pcolor green
-      set obj true
-    ]
-    ask patch -2 2 [
-      set pcolor green
-      set obj true
-    ]
-    ask patch 2 -2 [
-      set pcolor green
-      set obj true
-    ]
-  ]
-
-   if (nbgen <= 21) and (nbgen > 20)
-       [
-         ask patch 20 20 [
-      set pcolor green
-      set obj true
-    ]
-    ask patch 18 18 [
-      set pcolor green
-      set obj true
-    ]
-    ask patch 22 22 [
-      set pcolor green
-      set obj true
-    ]
-    ask patch 18 22 [
-      set pcolor green
-      set obj true
-    ]
-    ask patch 22 18 [
-      set pcolor green
-      set obj true
-    ]
-       ]
-
-       if (nbgen <= 41) and (nbgen > 40)
-       [
-         ask patch -20 -20 [
-      set pcolor green
-      set obj true
-    ]
-    ask patch -18 -18 [
-      set pcolor green
-      set obj true
-    ]
-    ask patch -22 -22 [
-      set pcolor green
-      set obj true
-    ]
-    ask patch -18 -22 [
-      set pcolor green
-      set obj true
-    ]
-    ask patch -22 -18 [
-      set pcolor green
-      set obj true
-    ]
-       ]
-       if (nbgen <= 61) and (nbgen > 60)
-       [
-         ask patch -20 20 [
-      set pcolor green
-      set obj true
-    ]
-    ask patch -18 18 [
-      set pcolor green
-      set obj true
-    ]
-    ask patch -22 22 [
-      set pcolor green
-      set obj true
-    ]
-    ask patch -18 22 [
-      set pcolor green
-      set obj true
-    ]
-    ask patch -22 18 [
-      set pcolor green
-      set obj true
-    ]
-       ]
-
-       if (nbgen <= 81) and (nbgen > 80)
-       [
-         ask patch 20 -20 [
-      set pcolor green
-      set obj true
-    ]
-    ask patch 18 -18 [
-      set pcolor green
-      set obj true
-    ]
-    ask patch 22 -22 [
-      set pcolor green
-      set obj true
-    ]
-    ask patch 18 -22 [
-      set pcolor green
-      set obj true
-    ]
-    ask patch 22 -18 [
-      set pcolor green
-      set obj true
-    ]
-       ]
-
-  ;; the following line is used to make the turtles
-  ;; animate more smoothly.
-  repeat 1 [ ask robots [ fd 0.2 ] display ]
-  ;; for greater efficiency, at the expense of smooth
-  ;; animation, substitute the following line instead:
-  ;;   ask turtles [ fd 1 ]
-  tick
-end
 
 ;; flocking which depends on near objects
 to flock_objets  ;; turtle procedure
@@ -674,7 +559,7 @@ population
 population
 1.0
 300
-159.0
+47.0
 1.0
 1
 NIL
@@ -812,7 +697,7 @@ nb_obj
 nb_obj
 0
 200
-170.0
+47.0
 1
 1
 NIL
@@ -885,7 +770,7 @@ SWITCH
 77
 enable_warehouses
 enable_warehouses
-1
+0
 1
 -1000
 
@@ -909,7 +794,7 @@ differents_objects
 differents_objects
 1
 5
-5.0
+3.0
 1
 1
 NIL
