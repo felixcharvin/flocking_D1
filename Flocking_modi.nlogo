@@ -51,6 +51,7 @@ to setup
     set obj false
   ]
 
+
   ;; create center of gravity for the choosen turtle
   if center_of_gravity [
     ask one-of robots
@@ -551,13 +552,13 @@ end
 
 to get_gas
   if (599 = gas_tank) [
-     set color pink
+     set size 1
   ]
   ask gasStations[
     if (distance myself < 1) [
       ask myself [
         set gas_tank (gas_tank + 2000)
-        set color yellow
+        set size 2
       ]
     ]
   ]
@@ -810,7 +811,7 @@ nb_obj
 nb_obj
 0
 200
-0.0
+170.0
 1
 1
 NIL
@@ -907,7 +908,7 @@ differents_objects
 differents_objects
 1
 5
-0.0
+2.0
 1
 1
 NIL
