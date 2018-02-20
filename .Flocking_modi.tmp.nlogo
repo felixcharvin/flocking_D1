@@ -346,7 +346,7 @@ to find-patchmates  ;; turtle procedure
 end
 
 to find-pickups
-  set pickups warehouses with [color = [color_obj] of myself]
+  set pickups warehouses  with [color = [color_obj] of myself]
 end
 
 to find-nearest-neighbor ;; turtle procedure
@@ -841,10 +841,10 @@ NIL
 1
 
 SWITCH
-23
-527
-170
-560
+13
+522
+160
+555
 group_objects
 group_objects
 1

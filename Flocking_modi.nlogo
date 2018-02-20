@@ -346,7 +346,7 @@ to find-patchmates  ;; turtle procedure
 end
 
 to find-pickups
-  set pickups warehouses with [color = [color_obj] of myself]
+  set pickups warehouses in-radius vision_obj with [color = [color_obj] of myself]
 end
 
 to find-nearest-neighbor ;; turtle procedure
