@@ -1,10 +1,12 @@
 breed [gravitations gravitation]
 breed [warehouses warehouse]
 breed [robots robot]
+breed [stations station]
 
 robots-own [
   flockmates         ;; agentset of nearby turtles
   patchmates
+  gasStations
   pickups
   nearest-neighbor   ;; closest one of our flockmates
   align_var
@@ -13,6 +15,7 @@ robots-own [
   velocity
   color_obj
   king
+  gas_tank
 ]
 
 patches-own [
@@ -31,6 +34,7 @@ to setup
       setxy random-xcor random-ycor
       set flockmates no-turtles
       set king false
+      set gas_tank ((random 2000) + 600)
   ]
   ask patches [
     set obj false
@@ -47,14 +51,16 @@ to setup
    set color blue
    set king true
   ]
-;  ask turtle 0 [
-;    set heading 0
-;    setxy 2 -10
-;  ]
-;  ask turtle 1 [
-;    set heading 180
-;    setxy -2 10
-;  ]
+
+  if (gasBool) [
+    create-stations gas_station_number [
+    set size 3
+    setxy random-xcor random-ycor
+    set shape "box"
+    set color pink
+    ]
+  ]
+
   reset-ticks
 end
 
@@ -110,6 +116,15 @@ to go_objets
   ask robots [
     flock_objets
     get_obj
+    if (gasBool) [
+      set gas_tank (gas_tank - 1)
+      if (gas_tank < 0) [
+        die
+      ]
+      if (gas_tank < 600) [
+        get_gas
+      ]
+    ]
   ]
   ;; the following line is used to make the turtles
   ;; animate more smoothly.
@@ -125,6 +140,15 @@ to go_pickups
     flock_objets
     get_obj_pickups
     get_pickups
+    if (gasBool) [
+      set gas_tank (gas_tank - 1)
+      if (gas_tank < 0) [
+        die
+      ]
+      if (gas_tank < 600) [
+        get_gas
+      ]
+    ]
   ]
   ;; the following line is used to make the turtles
   ;; animate more smoothly.
@@ -139,6 +163,15 @@ to go_objets_collections
   ask robots [
     flock_objets
     get_obj
+    if (gasBool) [
+      set gas_tank (gas_tank - 1)
+      if (gas_tank < 0) [
+        die
+      ]
+      if (gas_tank < 600) [
+        get_gas
+      ]
+    ]
   ]
 
   let nbgen random 100
@@ -273,7 +306,18 @@ end
 to go
   ask robots [
     flock
+    if (gasBool) [
+      set gas_tank (gas_tank - 1)
+      if (gas_tank < 0) [
+        die
+      ]
+      if (gas_tank < 600) [
+        get_gas
+      ]
+    ]
   ]
+
+
   ;; the following line is used to make the turtles
   ;; animate more smoothly.
   repeat 1 [ ask robots [ fd 0.2 ] display ]
@@ -287,12 +331,18 @@ to flock_objets  ;; turtle procedure
   find-flockmates
   find-patchmates
   find-pickups
+  if (gasBool) [
+    find-stations
+  ]
   if any? flockmates
     [ vector_move_objets ]
 end
 
 to flock  ;; turtle procedure
   find-flockmates
+  if (gasBool) [
+    find-stations
+  ]
   if any? flockmates
     [ vector_move ]
 end
@@ -314,6 +364,14 @@ to vector_move_objets
     ]
   ]
 
+  if (gasBool) and (gas_tank < 600) [
+    ask gasStations [
+      set new_dir (vector-normalize(list (pxcor - [xcor] of myself) (pycor - [ycor] of myself)))
+      set found true
+      stop
+    ]
+  ]
+
   ifelse found [set align_var new_dir] [align]
   cohere
   separate
@@ -326,7 +384,16 @@ to vector_move_objets
 end
 
 to vector_move
-  align
+  let found false
+  let new_dir (list (0) (0))
+  if (gasBool) and (gas_tank < 600) [
+    ask gasStations [
+      set new_dir (vector-normalize(list (pxcor - [xcor] of myself) (pycor - [ycor] of myself)))
+      set found true
+      stop
+    ]
+  ]
+  ifelse found [set align_var new_dir] [align]
   cohere
   separate
   let x item 0 align_var * alignmentWeight + item 0 cohere_var * cohesionWeight + item 0 separate_var * separationWeight
@@ -347,6 +414,10 @@ end
 
 to find-pickups
   set pickups warehouses in-radius vision_obj with [color = [color_obj] of myself]
+end
+
+to find-stations
+  set gasStations stations in-radius vision_obj
 end
 
 to find-nearest-neighbor ;; turtle procedure
@@ -489,6 +560,20 @@ to get_pickups
   ]
 end
 
+to get_gas
+  if (599 = gas_tank) [
+     set color pink
+  ]
+  ask gasStations[
+    if (distance myself < 1) [
+      ask myself [
+        set gas_tank (gas_tank + 2000)
+        set color yellow
+      ]
+    ]
+  ]
+end
+
 to-report vector-add [v1 v2]
   report (list (first v1 + first v2) (last v1 + last v2))
 end
@@ -594,7 +679,7 @@ population
 population
 1.0
 1000.0
-44.0
+102.0
 1.0
 1
 NIL
@@ -654,7 +739,7 @@ alignmentWeight
 alignmentWeight
 0
 10
-4.0
+2.0
 1
 1
 NIL
@@ -684,7 +769,7 @@ separationWeight
 separationWeight
 0
 10
-3.0
+2.0
 1
 1
 NIL
@@ -847,6 +932,32 @@ SWITCH
 555
 group_objects
 group_objects
+1
+1
+-1000
+
+SLIDER
+1185
+380
+1357
+413
+gas_station_number
+gas_station_number
+0
+10
+5.0
+1
+1
+NIL
+HORIZONTAL
+
+SWITCH
+1018
+464
+1121
+497
+gasBool
+gasBool
 1
 1
 -1000
