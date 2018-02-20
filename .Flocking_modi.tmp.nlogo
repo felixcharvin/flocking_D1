@@ -475,7 +475,7 @@ end
 
 to get_pickups
   ask pickups[
-    if (distance myself < 1) and (color = [color_obj] of myself) [
+    if (distance myself < ) and (color = [color_obj] of myself) [
       set nb_stored (nb_stored + 1)
       ask myself [
         set color_obj black
