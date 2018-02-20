@@ -44,21 +44,53 @@ to setup
   ask patches [
     set obj false
   ]
-  create-warehouses 1 [
-    set size 3
-    setxy random-xcor random-ycor
-    set shape "house"
-    set nb_stored 0
-    set color red
+
+  if (differents_objects > 0) [
+    create-warehouses 1 [
+      set size 3
+      setxy random-xcor random-ycor
+      set shape "house"
+      set nb_stored 0
+      set color blue
+    ]
+  ]
+  if (differents_objects > 1) [
+    create-warehouses 1 [
+      set size 3
+      setxy random-xcor random-ycor
+      set shape "house"
+      set nb_stored 0
+      set color red
+    ]
+  ]
+  if (differents_objects > 2) [
+    create-warehouses 1 [
+      set size 3
+      setxy random-xcor random-ycor
+      set shape "house"
+      set nb_stored 0
+      set color green
+    ]
+  ]
+  if (differents_objects > 3) [
+    create-warehouses 1 [
+      set size 3
+      setxy random-xcor random-ycor
+      set shape "house"
+      set nb_stored 0
+      set color magenta
+    ]
+  ]
+  if (differents_objects > 4) [
+    create-warehouses 1 [
+      set size 3
+      setxy random-xcor random-ycor
+      set shape "house"
+      set nb_stored 0
+      set color orange
+    ]
   ]
 
-  create-warehouses 1 [
-    set size 3
-    setxy random-xcor random-ycor
-    set shape "house"
-    set nb_stored 0
-    set color blue
-  ]
   if center_of_gravity [
     ask one-of robots
     [
@@ -521,13 +553,13 @@ end
 
 to get_gas
   if (599 = gas_tank) [
-     set color pink
+     set size 1
   ]
   ask gasStations[
     if (distance myself < 1) [
       ask myself [
         set gas_tank (gas_tank + 2000)
-        set color yellow
+        set size 2
       ]
     ]
   ]
@@ -776,7 +808,7 @@ nb_obj
 nb_obj
 0
 200
-0.0
+170.0
 1
 1
 NIL
@@ -849,7 +881,7 @@ SWITCH
 77
 enable_pickup
 enable_pickup
-1
+0
 1
 -1000
 
@@ -873,7 +905,7 @@ differents_objects
 differents_objects
 1
 5
-0.0
+2.0
 1
 1
 NIL
