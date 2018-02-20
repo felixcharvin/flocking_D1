@@ -4,6 +4,7 @@ breed [gravitations gravitation]
 breed [warehouses warehouse]
 ;; robots which transport objects
 breed [robots robot]
+breed [stations station]
 
 globals [pickup_on]  ;; bool to know if robots have to transport objects to wharehouses
 
@@ -16,6 +17,8 @@ robots-own [
   separate_var       ;; separate vector
   color_obj          ;; color of object that robot is holding, else 0
   choose_one         ;; bool to show center of gravity of flockmate
+  gas_tank
+  gasStations
 ]
 
 ;; Patches contains objects
@@ -35,12 +38,13 @@ to setup
   set pickup_on false
   ;; Create all robots and initiate
   create-robots population
-  [ set color white
-    set size 2  ;; easier to see
-    setxy random-xcor random-ycor
-    set flockmates no-turtles
-    set color_obj black
-    set choose_one false
+    [ set color white
+      set size 2  ;; easier to see
+      setxy random-xcor random-ycor
+      set flockmates no-turtles
+      set color_obj black
+      set choose_one false
+      set gas_tank ((random 2000) + 600)
   ]
   ;; initiate patches with no object
   ask patches [
@@ -60,6 +64,15 @@ to setup
       set color yellow
       set shape "circle"
       setxy  0 0
+    ]
+  ]
+
+  if (gasBool) [
+    create-stations gas_station_number [
+    set size 3
+    setxy random-xcor random-ycor
+    set shape "box"
+    set color pink
     ]
   ]
 
@@ -126,6 +139,15 @@ to go
     flock_objets
     get_obj_pickups
     get_pickups
+    if (gasBool) [
+      set gas_tank (gas_tank - 1)
+      if (gas_tank < 0) [
+        die
+      ]
+      if (gas_tank < 600) [
+        get_gas
+      ]
+    ]
     ]
   ][
     ;; we kill wharehouses in case they exist
@@ -134,6 +156,15 @@ to go
     ask robots [
       flock_objets
       get_obj
+      if (gasBool) [
+      set gas_tank (gas_tank - 1)
+      if (gas_tank < 0) [
+        die
+      ]
+      if (gas_tank < 600) [
+        get_gas
+      ]
+    ]
     ]
   ]
   repeat 1 [ ask robots [ fd 0.2 ] display ]
@@ -145,6 +176,15 @@ to go_objets_collections
   ask robots [
     flock_objets
     get_obj
+    if (gasBool) [
+      set gas_tank (gas_tank - 1)
+      if (gas_tank < 0) [
+        die
+      ]
+      if (gas_tank < 600) [
+        get_gas
+      ]
+    ]
   ]
 
   let nbgen random 100
@@ -281,12 +321,18 @@ to flock_objets  ;; turtle procedure
   find-flockmates
   find-patchmates
   find-pickups
+  if (gasBool) [
+    find-stations
+  ]
   if any? flockmates
     [ vector_move_objets ]
 end
 
 to flock  ;; turtle procedure
   find-flockmates
+  if (gasBool) [
+    find-stations
+  ]
   if any? flockmates
     [ vector_move ]
 end
@@ -309,6 +355,14 @@ to vector_move_objets
     ]
   ]
 
+  if (gasBool) and (gas_tank < 600) [
+    ask gasStations [
+      set new_dir (vector-normalize(list (pxcor - [xcor] of myself) (pycor - [ycor] of myself)))
+      set found true
+      stop
+    ]
+  ]
+
   ifelse found [set align_var new_dir] [align]
   cohere
   separate
@@ -321,7 +375,16 @@ to vector_move_objets
 end
 
 to vector_move
-  align
+  let found false
+  let new_dir (list (0) (0))
+  if (gasBool) and (gas_tank < 600) [
+    ask gasStations [
+      set new_dir (vector-normalize(list (pxcor - [xcor] of myself) (pycor - [ycor] of myself)))
+      set found true
+      stop
+    ]
+  ]
+  ifelse found [set align_var new_dir] [align]
   cohere
   separate
   let x item 0 align_var * alignmentWeight + item 0 cohere_var * cohesionWeight + item 0 separate_var * separationWeight
@@ -345,6 +408,10 @@ end
 ;;find near wharehouse with the color of our object
 to find-pickups
   set pickups warehouses in-radius vision_obj with [color = [color_obj] of myself]
+end
+
+to find-stations
+  set gasStations stations in-radius vision_obj
 end
 
 ;;; SEPARATE
@@ -482,6 +549,20 @@ to get_pickups
   ]
 end
 
+to get_gas
+  if (599 = gas_tank) [
+     set color pink
+  ]
+  ask gasStations[
+    if (distance myself < 1) [
+      ask myself [
+        set gas_tank (gas_tank + 2000)
+        set color yellow
+      ]
+    ]
+  ]
+end
+
 ;;return addition of 2 vectors v1 +v2
 to-report vector-add [v1 v2]
   report (list (first v1 + first v2) (last v1 + last v2))
@@ -590,8 +671,8 @@ SLIDER
 population
 population
 1.0
-1000.0
-44.0
+300
+159.0
 1.0
 1
 NIL
@@ -606,7 +687,11 @@ max-align-turn
 max-align-turn
 0.0
 20.0
+<<<<<<< HEAD
 8.75
+=======
+11.25
+>>>>>>> 508c56295115a592af411f73fd25395f81778c20
 0.25
 1
 degrees
@@ -621,7 +706,7 @@ vision
 vision
 0.0
 40
-15.0
+9.0
 0.5
 1
 patches
@@ -636,7 +721,7 @@ minimum-separation
 minimum-separation
 0.0
 10
-5.0
+3.0
 0.25
 1
 patches
@@ -651,7 +736,7 @@ alignmentWeight
 alignmentWeight
 0
 10
-4.0
+2.0
 1
 1
 NIL
@@ -681,7 +766,7 @@ separationWeight
 separationWeight
 0
 10
-6.0
+2.0
 1
 1
 NIL
@@ -696,7 +781,11 @@ vision_obj
 vision_obj
 1
 20
+<<<<<<< HEAD
 18.0
+=======
+11.0
+>>>>>>> 508c56295115a592af411f73fd25395f81778c20
 0.5
 1
 patches
@@ -729,7 +818,7 @@ nb_obj
 nb_obj
 0
 200
-50.0
+0.0
 1
 1
 NIL
@@ -780,6 +869,21 @@ group_objects
 1
 -1000
 
+SLIDER
+1127
+465
+1299
+498
+gas_station_number
+gas_station_number
+0
+10
+3.0
+1
+1
+NIL
+HORIZONTAL
+
 SWITCH
 10
 44
@@ -811,11 +915,22 @@ differents_objects
 differents_objects
 1
 5
-5.0
+0.0
 1
 1
 NIL
 HORIZONTAL
+
+SWITCH
+1018
+464
+1121
+497
+gasBool
+gasBool
+0
+1
+-1000
 
 BUTTON
 848
