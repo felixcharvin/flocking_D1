@@ -5,6 +5,8 @@ breed [warehouses warehouse]
 ;; robots which transport objects
 breed [robots robot]
 
+globals [pickup_on]  ;; bool to know if robots have to transport objects to wharehouses
+
 robots-own [
   flockmates         ;; nearby robots
   patchmates         ;; nearby patch that contains objects
@@ -29,33 +31,23 @@ warehouses-own [
 
 to setup
   clear-all
+  ;; set global variable for wharehousses
+  set pickup_on false
+  ;; Create all robots and initiate
   create-robots population
-    [ set color white
-      set size 2  ;; easier to see
-      setxy random-xcor random-ycor
-      set flockmates no-turtles
-      set color_obj black
-      set choose_one false
-
+  [ set color white
+    set size 2  ;; easier to see
+    setxy random-xcor random-ycor
+    set flockmates no-turtles
+    set color_obj black
+    set choose_one false
   ]
+  ;; initiate patches with no object
   ask patches [
     set obj false
   ]
-  create-warehouses 1 [
-    set size 3
-    setxy random-xcor random-ycor
-    set shape "house"
-    set nb_stored 0
-    set color red
-  ]
 
-  create-warehouses 1 [
-    set size 3
-    setxy random-xcor random-ycor
-    set shape "house"
-    set nb_stored 0
-    set color blue
-  ]
+  ;; create center of gravity for the choosen turtle
   if center_of_gravity [
     ask one-of robots
     [
@@ -74,21 +66,43 @@ to setup
   reset-ticks
 end
 
+;; create object of color on patches
 to spawn_obj
-  let colcor_list [blue red green magenta orange]
+  let color_list [blue red green magenta orange]
   let i 5
   while [i != differents_objects] [
-    set colcor_list remove-item (i - 1) colcor_list
-
+    set color_list remove-item (i - 1) color_list
+    set i (i - 1)
   ]
   repeat nb_obj [
     ask one-of patches [
-      set pcolor one-of colcor_list
+      set pcolor one-of color_list
       set obj true
     ]
   ]
 end
 
+;; create warehouses taht collect objects
+to spawn-warehouses
+  let color_list [blue red green magenta orange]
+  let i 5
+  while [i != differents_objects] [
+    set color_list remove-item (i - 1) color_list
+    set i (i - 1)
+  ]
+  foreach color_list [ x ->
+    create-warehouses 1 [
+        set size 3
+        setxy random-xcor random-ycor
+        set shape "house"
+        set nb_stored 0
+        set color x
+      ]
+  ]
+
+end
+
+;; Delete all object on the map
 to clear_obj
   ask patches [
      set pcolor black
@@ -96,15 +110,27 @@ to clear_obj
   ]
 end
 
+;; main function that make move robots
 to go
-  ifelse enable_pickup
+  ifelse enable_warehouses
   [
+    ;;Check if wharehouses are already created
+    ifelse pickup_on [
+    ]
+    ;; if not, we create them
+    [
+      spawn-warehouses
+      set pickup_on true
+    ]
     ask robots [
     flock_objets
     get_obj_pickups
     get_pickups
     ]
   ][
+    ;; we kill wharehouses in case they exist
+    set pickup_on false
+    ask warehouses [ die ]
     ask robots [
       flock_objets
       get_obj
@@ -250,7 +276,7 @@ to go_objets_collections
   tick
 end
 
-
+;; flocking which depends on near objects
 to flock_objets  ;; turtle procedure
   find-flockmates
   find-patchmates
@@ -265,6 +291,7 @@ to flock  ;; turtle procedure
     [ vector_move ]
 end
 
+;; regroup 3 force align, cohere, sperate to create flocking force and give direction to robots
 to vector_move_objets
   let found false
   let new_dir (list (0) (0))
@@ -305,20 +332,22 @@ to vector_move
   ]
 end
 
+;; find near robots
 to find-flockmates  ;; turtle procedure
   set flockmates other turtles in-radius vision
 end
 
+;;find near patch with objects
 to find-patchmates  ;; turtle procedure
   set patchmates patches in-radius vision_obj with [(obj = true)]
 end
 
+;;find near wharehouse with the color of our object
 to find-pickups
   set pickups warehouses in-radius vision_obj with [color = [color_obj] of myself]
 end
 
 ;;; SEPARATE
-
 to separate  ;; turtle procedure
   set separate_var (list (0) (0))
   let vect_curr list (xcor) (ycor)
@@ -332,7 +361,6 @@ to separate  ;; turtle procedure
 end
 
 ;;; ALIGN
-
 to align  ;; turtle procedure
   let x-component mean [cos (90 - heading)] of flockmates
   let y-component mean [sin (90 - heading)] of flockmates
@@ -345,7 +373,6 @@ to align  ;; turtle procedure
 end
 
 ;;; COHERE
-
 to cohere  ;; turtle procedure
   let x-component 0
   let y-component 0
@@ -403,7 +430,6 @@ end
 
 
 ;;; HELPER PROCEDURES
-
 to turn-towards [new-heading max-turn]  ;; turtle procedure
   turn-at-most (subtract-headings new-heading heading) max-turn
 end
@@ -419,6 +445,7 @@ to turn-at-most [turn max-turn]  ;; turtle procedure
     [ rt turn ]
 end
 
+;; robot get object and it disapears on patch
 to get_obj
   ask patchmates[
     if distance myself < 0.5 [
@@ -428,6 +455,7 @@ to get_obj
   ]
 end
 
+;; robot get object and it disapears on patch
 to get_obj_pickups
   ask patchmates[
     if (distance myself < 0.5) and (0 = [color_obj] of myself) [
@@ -441,6 +469,7 @@ to get_obj_pickups
   ]
 end
 
+;;warehouses collect given objects if robots are near enough
 to get_pickups
   ask pickups[
     if (distance myself < 1) and (color = [color_obj] of myself) [
@@ -453,10 +482,12 @@ to get_pickups
   ]
 end
 
+;;return addition of 2 vectors v1 +v2
 to-report vector-add [v1 v2]
   report (list (first v1 + first v2) (last v1 + last v2))
 end
 
+;;return substraction of 2 vector v1 -v2
 to-report vector-sub [v1 v2]
   let size-x (max-pxcor - min-pxcor)
   let size-y (max-pycor - min-pycor)
@@ -475,6 +506,7 @@ to-report vector-sub [v1 v2]
   report (list x y)
 end
 
+return divisio
 to-report vector-div [v1 d]
   report (list (first v1 / d) (last v1 / d))
 end
@@ -573,7 +605,7 @@ max-align-turn
 max-align-turn
 0.0
 20.0
-7.25
+8.75
 0.25
 1
 degrees
@@ -663,7 +695,7 @@ vision_obj
 vision_obj
 1
 20
-12.5
+18.0
 0.5
 1
 patches
@@ -752,9 +784,9 @@ SWITCH
 44
 233
 77
-enable_pickup
-enable_pickup
-1
+enable_warehouses
+enable_warehouses
+0
 1
 -1000
 
@@ -778,7 +810,7 @@ differents_objects
 differents_objects
 1
 5
-2.0
+5.0
 1
 1
 NIL
