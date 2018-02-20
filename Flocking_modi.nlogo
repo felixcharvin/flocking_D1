@@ -1,9 +1,13 @@
+;; Circle that represents center of gravity of flockmates
 breed [gravitations gravitation]
+;; Wharehouses that stock objects
 breed [warehouses warehouse]
+;; robots which transport objects
 breed [robots robot]
 breed [stations station]
 
 robots-own [
+<<<<<<< HEAD
   flockmates         ;; agentset of nearby turtles
   patchmates
   gasStations
@@ -16,16 +20,29 @@ robots-own [
   color_obj
   king
   gas_tank
+=======
+  flockmates         ;; nearby robots
+  patchmates         ;; nearby patch that contains objects
+  pickups            ;; nearby wharehouses
+  align_var          ;; align vector
+  cohere_var         ;; cohere vector
+  separate_var       ;; separate vector
+  color_obj          ;; color of object that robot is holding, else 0
+  choose_one         ;; bool to show center of gravity of flockmate
+>>>>>>> 3fdae3563ab00edc98857787de698726a97d586b
 ]
 
+;; Patches contains objects
 patches-own [
-  obj
+  obj                ;; bool to know if there is an object
 ]
 
+;;
 warehouses-own [
-  nb_stored
+  nb_stored          ;; int for the number of objects stock
 ]
 
+<<<<<<< HEAD
 to setup
   clear-all
   create-robots population
@@ -65,14 +82,18 @@ to setup
 end
 
 to setup_pickup
+=======
+
+to setup
+>>>>>>> 3fdae3563ab00edc98857787de698726a97d586b
   clear-all
   create-robots population
     [ set color white
-      set size 1.5  ;; easier to see
+      set size 2  ;; easier to see
       setxy random-xcor random-ycor
       set flockmates no-turtles
       set color_obj black
-      set king false
+      set choose_one false
 
   ]
   ask patches [
@@ -93,13 +114,34 @@ to setup_pickup
     set nb_stored 0
     set color blue
   ]
+  if center_of_gravity [
+    ask one-of robots
+    [
+      set size 3
+      set shape "turtle"
+      set choose_one true
+    ]
+    create-gravitations 1
+    [
+      set color yellow
+      set shape "circle"
+      setxy  0 0
+    ]
+  ]
+
   reset-ticks
 end
 
 to spawn_obj
+  let colcor_list [blue red green magenta orange]
+  let i 5
+  while [i != differents_objects] [
+    set colcor_list remove-item (i - 1) colcor_list
+    set i (i - 1)
+  ]
   repeat nb_obj [
     ask one-of patches [
-      set pcolor one-of [ blue red ]
+      set pcolor one-of colcor_list
       set obj true
     ]
   ]
@@ -112,6 +154,7 @@ to clear_obj
   ]
 end
 
+<<<<<<< HEAD
 to go_objets
   ask robots [
     flock_objets
@@ -148,16 +191,26 @@ to go_pickups
       if (gas_tank < 600) [
         get_gas
       ]
+=======
+to go
+  ifelse enable_pickup
+  [
+    ask robots [
+    flock_objets
+    get_obj_pickups
+    get_pickups
+    ]
+  ][
+    ask robots [
+      flock_objets
+      get_obj
+>>>>>>> 3fdae3563ab00edc98857787de698726a97d586b
     ]
   ]
-  ;; the following line is used to make the turtles
-  ;; animate more smoothly.
   repeat 1 [ ask robots [ fd 0.2 ] display ]
-  ;; for greater efficiency, at the expense of smooth
-  ;; animation, substitute the following line instead:
-  ;;   ask turtles [ fd 1 ]
   tick
 end
+
 
 to go_objets_collections
   ask robots [
@@ -303,6 +356,7 @@ to go_objets_collections
   tick
 end
 
+<<<<<<< HEAD
 to go
   ask robots [
     flock
@@ -326,6 +380,8 @@ to go
   ;;   ask turtles [ fd 1 ]
   tick
 end
+=======
+>>>>>>> 3fdae3563ab00edc98857787de698726a97d586b
 
 to flock_objets  ;; turtle procedure
   find-flockmates
@@ -416,6 +472,7 @@ to find-pickups
   set pickups warehouses in-radius vision_obj with [color = [color_obj] of myself]
 end
 
+<<<<<<< HEAD
 to find-stations
   set gasStations stations in-radius vision_obj
 end
@@ -424,6 +481,8 @@ to find-nearest-neighbor ;; turtle procedure
   set nearest-neighbor min-one-of flockmates [distance myself]
 end
 
+=======
+>>>>>>> 3fdae3563ab00edc98857787de698726a97d586b
 ;;; SEPARATE
 
 to separate  ;; turtle procedure
@@ -486,7 +545,7 @@ to cohere  ;; turtle procedure
       [ set y-component (ycor + (2 * max-pycor + diffy1 + 1)) ]
       [ set y-component (ycor - (2 * max-pycor - diffy1 + 1)) ]
     ]
-  if (breed = turtles and [king] of self)
+  if (breed = robots and [choose_one] of self)
   [
     ask gravitations
     [
@@ -637,10 +696,10 @@ ticks
 30.0
 
 BUTTON
-24
-56
-101
-89
+10
+112
+123
+145
 NIL
 setup
 NIL
@@ -654,10 +713,10 @@ NIL
 1
 
 BUTTON
-138
-55
-219
-88
+128
+112
+233
+145
 NIL
 go
 T
@@ -686,10 +745,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-12
-252
-237
-285
+11
+292
+236
+325
 max-align-turn
 max-align-turn
 0.0
@@ -701,10 +760,10 @@ degrees
 HORIZONTAL
 
 SLIDER
-12
-150
-237
-183
+11
+190
+236
+223
 vision
 vision
 0.0
@@ -716,10 +775,10 @@ patches
 HORIZONTAL
 
 SLIDER
-12
-218
-237
-251
+11
+258
+236
+291
 minimum-separation
 minimum-separation
 0.0
@@ -769,17 +828,21 @@ separationWeight
 separationWeight
 0
 10
+<<<<<<< HEAD
 2.0
+=======
+6.0
+>>>>>>> 3fdae3563ab00edc98857787de698726a97d586b
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-12
-184
-237
-217
+11
+224
+236
+257
 vision_obj
 vision_obj
 1
@@ -789,40 +852,6 @@ vision_obj
 1
 patches
 HORIZONTAL
-
-BUTTON
-109
-101
-196
-134
-NIL
-go_objets
-T
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-0
-
-BUTTON
-200
-100
-350
-133
-NIL
-go_objets_collections
-T
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-0
 
 PLOT
 1064
@@ -851,45 +880,11 @@ nb_obj
 nb_obj
 0
 200
-107.0
+50.0
 1
 1
 NIL
 HORIZONTAL
-
-BUTTON
-245
-204
-349
-237
-NIL
-setup_pickup
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
-251
-253
-344
-286
-NIL
-go_pickups
-T
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-0
 
 BUTTON
 12
@@ -926,16 +921,17 @@ NIL
 1
 
 SWITCH
-13
-522
-160
-555
+12
+487
+237
+520
 group_objects
 group_objects
 1
 1
 -1000
 
+<<<<<<< HEAD
 SLIDER
 1185
 380
@@ -945,12 +941,46 @@ gas_station_number
 gas_station_number
 0
 10
+=======
+SWITCH
+10
+44
+233
+77
+enable_pickup
+enable_pickup
+1
+1
+-1000
+
+SWITCH
+10
+78
+233
+111
+center_of_gravity
+center_of_gravity
+0
+1
+-1000
+
+SLIDER
+12
+523
+237
+556
+differents_objects
+differents_objects
+1
+5
+>>>>>>> 3fdae3563ab00edc98857787de698726a97d586b
 5.0
 1
 1
 NIL
 HORIZONTAL
 
+<<<<<<< HEAD
 SWITCH
 1018
 464
@@ -961,6 +991,24 @@ gasBool
 1
 1
 -1000
+=======
+BUTTON
+848
+577
+922
+610
+NIL
+clear-all
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+>>>>>>> 3fdae3563ab00edc98857787de698726a97d586b
 
 @#$#@#$#@
 ## WHAT IS IT?
