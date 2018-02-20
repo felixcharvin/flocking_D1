@@ -4,7 +4,10 @@ breed [gravitations gravitation]
 breed [warehouses warehouse]
 ;; robots which transport objects
 breed [robots robot]
+;;Fuel stations
 breed [stations station]
+;;Obstacles
+breed [obstacles obstacle]
 
 globals [pickup_on]  ;; bool to know if robots have to transport objects to wharehouses
 
@@ -37,6 +40,17 @@ to setup
   clear-all
   ;; set global variable for wharehousses
   set pickup_on false
+
+  if (gasBool) [
+    create-stations gas_station_number [
+      set size 3
+      setxy random-xcor random-ycor
+      set shape "box"
+      set color pink
+    ]
+  ]
+  spawn-obstacle
+
   ;; Create all robots and initiate
   create-robots population
     [ set color white
@@ -52,7 +66,6 @@ to setup
   ask patches [
     set obj false
   ]
-
 
   ;; create center of gravity for the choosen turtle
   if center_of_gravity [
@@ -70,17 +83,34 @@ to setup
     ]
   ]
 
-  if (gasBool) [
-    create-stations gas_station_number [
-    set size 3
-    setxy random-xcor random-ycor
-    set shape "box"
-    set color pink
-    ]
-  ]
-
   reset-ticks
 end
+
+to spawn-obstacle
+  repeat obstacle_number [
+    let x_obs random-xcor
+    let y_obs random-ycor
+    let size_obs ((random 5) + 4)
+    let good_place false
+    while [not good_place][
+      set good_place true
+      ask turtles[
+        if ((distancexy x_obs y_obs) < size_obs)[
+          set good_place false
+          set x_obs random-xcor
+          set y_obs random-ycor
+        ]
+      ]
+    ]
+    create-obstacles 1 [
+      set size size_obs
+      set shape "circle"
+      set color grey
+      setxy x_obs y_obs
+    ]
+  ]
+end
+
 
 ;; create object of color on patches
 to spawn_obj
@@ -140,9 +170,23 @@ to spawn-warehouses
     set i (i - 1)
   ]
   foreach color_list [ x ->
+    let x_ware random-xcor
+    let y_ware random-ycor
+    let good_place false
+    while [not good_place][
+      set good_place true
+      ask obstacles [
+        if ((distancexy x_ware y_ware) < size) [
+          set good_place false
+          set x_ware random-xcor
+          set y_ware random-ycor
+        ]
+
+      ]
+    ]
     create-warehouses 1 [
         set size 3
-        setxy random-xcor random-ycor
+        setxy x_ware y_ware
         set shape "house"
         set nb_stored 0
         set color x
@@ -483,9 +527,9 @@ end
 ; See Info tab for full copyright and license.
 @#$#@#$#@
 GRAPHICS-WINDOW
-351
+490
 10
-914
+1053
 574
 -1
 -1
@@ -664,13 +708,13 @@ patches
 HORIZONTAL
 
 PLOT
-1056
-38
-1430
-273
-plot 1
-NIL
-NIL
+1095
+10
+1469
+245
+Indice de performance
+Ticks
+Performance
 0.0
 10.0
 0.0
@@ -742,10 +786,10 @@ group_objects
 -1000
 
 SLIDER
-1127
-465
-1299
-498
+236
+10
+459
+43
 gas_station_number
 gas_station_number
 0
@@ -794,10 +838,10 @@ NIL
 HORIZONTAL
 
 SWITCH
-1018
-464
-1121
-497
+236
+44
+459
+77
 gasBool
 gasBool
 1
@@ -805,10 +849,10 @@ gasBool
 -1000
 
 BUTTON
-840
-580
-914
-613
+10
+146
+123
+179
 NIL
 clear-all
 NIL
@@ -820,6 +864,21 @@ NIL
 NIL
 NIL
 1
+
+SLIDER
+236
+78
+459
+111
+obstacle_number
+obstacle_number
+0
+5
+5.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
