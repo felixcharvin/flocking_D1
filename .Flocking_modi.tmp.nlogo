@@ -72,12 +72,6 @@ to setup_pickup
   ask patches [
     set obj false
   ]
-  repeat nb_obj [
-    ask one-of patches [
-      set pcolor one-of [ blue red ]
-      set obj true
-    ]
-  ]
   create-warehouses 1 [
     set size 3
     setxy random-xcor random-ycor
@@ -96,16 +90,26 @@ to setup_pickup
   reset-ticks
 end
 
+to spawn_obj
+  repeat nb_obj [
+    ask one-of patches [
+      set pcolor one-of [ blue red ]
+      set obj true
+    ]
+  ]
+end
+
+to clear_obj
+  ask patches [
+     set pcolor black
+      set obj false
+  ]
+end
+
 to go_objets
   ask robots [
     flock_objets
     get_obj
-  ]
-  if random 100 < spawn_obj [
-    ask one-of patches [
-      set pcolor green
-      set obj true
-    ]
   ]
   ;; the following line is used to make the turtles
   ;; animate more smoothly.
@@ -475,7 +479,7 @@ end
 
 to get_pickups
   ask pickups[
-    if (distance myself < ) and (color = [color_obj] of myself) [
+    if (distance myself < 1) and (color = [color_obj] of myself) [
       set nb_stored (nb_stored + 1)
       ask myself [
         set color_obj black
@@ -597,10 +601,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-4
-217
+12
+252
 237
-250
+285
 max-align-turn
 max-align-turn
 0.0
@@ -612,37 +616,7 @@ degrees
 HORIZONTAL
 
 SLIDER
-4
-251
-237
-284
-max-cohere-turn
-max-cohere-turn
-0.0
-20.0
-1.0
-0.25
-1
-degrees
-HORIZONTAL
-
-SLIDER
-4
-285
-237
-318
-max-separate-turn
-max-separate-turn
-0.0
-20.0
-0.0
-0.25
-1
-degrees
-HORIZONTAL
-
-SLIDER
-14
+12
 150
 237
 183
@@ -658,9 +632,9 @@ HORIZONTAL
 
 SLIDER
 12
-183
-235
-216
+218
+237
+251
 minimum-separation
 minimum-separation
 0.0
@@ -672,10 +646,10 @@ patches
 HORIZONTAL
 
 SLIDER
-6
-324
+12
+354
 237
-357
+387
 alignmentWeight
 alignmentWeight
 0
@@ -687,10 +661,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-8
-370
-235
-403
+12
+388
+236
+421
 cohesionWeight
 cohesionWeight
 0
@@ -702,10 +676,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-8
-407
-231
-440
+12
+422
+237
+455
 separationWeight
 separationWeight
 0
@@ -717,33 +691,18 @@ NIL
 HORIZONTAL
 
 SLIDER
-10
-459
-229
-492
+12
+184
+237
+217
 vision_obj
 vision_obj
 1
 20
-4.5
+12.5
 0.5
 1
 patches
-HORIZONTAL
-
-SLIDER
-18
-523
-190
-556
-spawn_obj
-spawn_obj
-0
-100
-59.0
-1
-1
-NIL
 HORIZONTAL
 
 BUTTON
@@ -799,15 +758,15 @@ PENS
 "default" 1.0 0 -16777216 true "" "plot mean [count flockmates] of turtles"
 
 SLIDER
-42
-566
-214
-599
+12
+560
+237
+593
 nb_obj
 nb_obj
 0
 200
-43.0
+107.0
 1
 1
 NIL
@@ -846,6 +805,51 @@ NIL
 NIL
 NIL
 0
+
+BUTTON
+12
+598
+118
+631
+Spawn object
+spawn_obj
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+118
+598
+238
+631
+Remove objects
+clear_obj
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+SWITCH
+23
+527
+170
+560
+group_objects
+group_objects
+1
+1
+-1000
 
 @#$#@#$#@
 ## WHAT IS IT?
