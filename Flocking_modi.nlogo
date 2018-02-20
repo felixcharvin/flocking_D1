@@ -675,7 +675,7 @@ population
 population
 1.0
 300
-159.0
+77.0
 1.0
 1
 NIL
@@ -720,7 +720,7 @@ minimum-separation
 minimum-separation
 0.0
 10
-3.0
+7.25
 0.25
 1
 patches
@@ -735,7 +735,7 @@ alignmentWeight
 alignmentWeight
 0
 10
-2.0
+4.0
 1
 1
 NIL
@@ -750,7 +750,7 @@ cohesionWeight
 cohesionWeight
 0
 10
-1.0
+4.0
 1
 1
 NIL
@@ -765,7 +765,7 @@ separationWeight
 separationWeight
 0
 10
-2.0
+4.0
 1
 1
 NIL
@@ -802,7 +802,7 @@ true
 false
 "" ""
 PENS
-"default" 1.0 0 -16777216 true "" "plot mean [count flockmates] of turtles"
+"default" 1.0 0 -16777216 true "" "let coeff1 0\nlet coeff2 0\nask robots [\nif count flockmates > 0 [\n  let mean-sin mean [sin heading] of flockmates\n  let mean-cos mean [cos heading] of flockmates\n  set coeff1 coeff1 + 1 / (1 + abs (heading - (atan mean-sin mean-cos)))\n]\nset coeff2 coeff2 + count robots in-radius (0.5 * minimum-separation) * (count robots - count robots in-radius (0.8 * minimum-separation))\n]\nset coeff1 (coeff1 / count robots)\nset coeff2 (coeff2 / count robots)\nplot 100 * coeff1 * coeff2"
 
 SLIDER
 12
@@ -897,7 +897,7 @@ SWITCH
 111
 center_of_gravity
 center_of_gravity
-0
+1
 1
 -1000
 
@@ -923,7 +923,7 @@ SWITCH
 497
 gasBool
 gasBool
-0
+1
 1
 -1000
 
