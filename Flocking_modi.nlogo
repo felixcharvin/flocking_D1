@@ -52,16 +52,7 @@ to setup
   spawn-obstacle
 
   ;; Create all robots and initiate
-  create-robots population
-    [ set color white
-      set size 2  ;; easier to see
-      setxy random-xcor random-ycor
-      set flockmates no-turtles
-      set colorFlockmates no-turtles
-      set color_obj black
-      set choose_one false
-      set gas_tank ((random 2000) + 600)
-  ]
+  spawn-robots
   ;; initiate patches with no object
   ask patches [
     set obj false
@@ -84,6 +75,36 @@ to setup
   ]
 
   reset-ticks
+end
+
+;; create robots
+to spawn-robots
+  repeat population [
+    let x_robot random-xcor
+    let y_robot random-ycor
+    let good_place false
+    while [not good_place][
+      set good_place true
+      ask obstacles [
+        if ((distancexy x_robot y_robot) < size) [
+          set good_place false
+          set x_robot random-xcor
+          set y_robot random-ycor
+        ]
+
+      ]
+    ]
+    create-robots 1
+    [ set color white
+      set size 2  ;; easier to see
+      setxy x_robot y_robot
+      set flockmates no-turtles
+      set colorFlockmates no-turtles
+      set color_obj black
+      set choose_one false
+      set gas_tank ((random 2000) + 600)
+    ]
+  ]
 end
 
 to spawn-obstacle
@@ -192,7 +213,6 @@ to spawn-warehouses
         set color x
       ]
   ]
-
 end
 
 ;; Delete all object on the map
@@ -249,7 +269,18 @@ to go
       ]
     ]
   ]
-  repeat 1 [ ask robots [ fd 0.2 ] display ]
+  ask robots [
+    let velocity 0.2
+    let head (heading + 180)
+    let turn false
+    ask obstacles [
+      if ((distance myself) < ((size / 2) + 1)) [
+        set turn true
+      ]
+    ]
+    if turn [set heading head]
+    fd velocity
+  ]
   tick
 end
 
@@ -308,7 +339,7 @@ end
 
 ;; find near robots
 to find-flockmates  ;; turtle procedure
-  set flockmates other turtles in-radius vision
+  set flockmates other robots in-radius vision
 end
 
 ;;find near patch with objects
@@ -323,7 +354,7 @@ end
 
 ;; find near robots with same color
 to find-colorFlockmates  ;; turtle procedure
-  set colorFlockmates other turtles in-radius vision with [color = [color] of myself]
+  set colorFlockmates other robots in-radius vision with [color = [color] of myself]
 end
 
 to find-stations
@@ -641,7 +672,7 @@ minimum-separation
 minimum-separation
 0.0
 10
-2.75
+5.75
 0.25
 1
 patches
@@ -781,7 +812,7 @@ SWITCH
 520
 group_objects
 group_objects
-1
+0
 1
 -1000
 
