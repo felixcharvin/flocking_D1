@@ -7,20 +7,6 @@ breed [robots robot]
 breed [stations station]
 
 robots-own [
-<<<<<<< HEAD
-  flockmates         ;; agentset of nearby turtles
-  patchmates
-  gasStations
-  pickups
-  nearest-neighbor   ;; closest one of our flockmates
-  align_var
-  cohere_var
-  separate_var
-  velocity
-  color_obj
-  king
-  gas_tank
-=======
   flockmates         ;; nearby robots
   patchmates         ;; nearby patch that contains objects
   pickups            ;; nearby wharehouses
@@ -29,7 +15,8 @@ robots-own [
   separate_var       ;; separate vector
   color_obj          ;; color of object that robot is holding, else 0
   choose_one         ;; bool to show center of gravity of flockmate
->>>>>>> 3fdae3563ab00edc98857787de698726a97d586b
+  gas_tank
+  gasStations
 ]
 
 ;; Patches contains objects
@@ -42,50 +29,8 @@ warehouses-own [
   nb_stored          ;; int for the number of objects stock
 ]
 
-<<<<<<< HEAD
-to setup
-  clear-all
-  create-robots population
-    [ set color yellow - 2 + random 7  ;; random shades look nice
-      set size 1.5  ;; easier to see
-      setxy random-xcor random-ycor
-      set flockmates no-turtles
-      set king false
-      set gas_tank ((random 2000) + 600)
-  ]
-  ask patches [
-    set obj false
-  ]
-  create-gravitations 1
-  [
-    set color red
-    set shape "circle"
-    setxy 50 0
-
-  ]
-  ask one-of robots
-  [
-   set color blue
-   set king true
-  ]
-
-  if (gasBool) [
-    create-stations gas_station_number [
-    set size 3
-    setxy random-xcor random-ycor
-    set shape "box"
-    set color pink
-    ]
-  ]
-
-  reset-ticks
-end
-
-to setup_pickup
-=======
 
 to setup
->>>>>>> 3fdae3563ab00edc98857787de698726a97d586b
   clear-all
   create-robots population
     [ set color white
@@ -94,7 +39,7 @@ to setup
       set flockmates no-turtles
       set color_obj black
       set choose_one false
-
+      set gas_tank ((random 2000) + 600)
   ]
   ask patches [
     set obj false
@@ -129,6 +74,15 @@ to setup
     ]
   ]
 
+  if (gasBool) [
+    create-stations gas_station_number [
+    set size 3
+    setxy random-xcor random-ycor
+    set shape "box"
+    set color pink
+    ]
+  ]
+
   reset-ticks
 end
 
@@ -154,44 +108,6 @@ to clear_obj
   ]
 end
 
-<<<<<<< HEAD
-to go_objets
-  ask robots [
-    flock_objets
-    get_obj
-    if (gasBool) [
-      set gas_tank (gas_tank - 1)
-      if (gas_tank < 0) [
-        die
-      ]
-      if (gas_tank < 600) [
-        get_gas
-      ]
-    ]
-  ]
-  ;; the following line is used to make the turtles
-  ;; animate more smoothly.
-  repeat 1 [ ask robots [ fd 0.2 ] display ]
-  ;; for greater efficiency, at the expense of smooth
-  ;; animation, substitute the following line instead:
-  ;;   ask turtles [ fd 1 ]
-  tick
-end
-
-to go_pickups
-  ask robots [
-    flock_objets
-    get_obj_pickups
-    get_pickups
-    if (gasBool) [
-      set gas_tank (gas_tank - 1)
-      if (gas_tank < 0) [
-        die
-      ]
-      if (gas_tank < 600) [
-        get_gas
-      ]
-=======
 to go
   ifelse enable_pickup
   [
@@ -199,12 +115,29 @@ to go
     flock_objets
     get_obj_pickups
     get_pickups
+    if (gasBool) [
+      set gas_tank (gas_tank - 1)
+      if (gas_tank < 0) [
+        die
+      ]
+      if (gas_tank < 600) [
+        get_gas
+      ]
+    ]
     ]
   ][
     ask robots [
       flock_objets
       get_obj
->>>>>>> 3fdae3563ab00edc98857787de698726a97d586b
+      if (gasBool) [
+      set gas_tank (gas_tank - 1)
+      if (gas_tank < 0) [
+        die
+      ]
+      if (gas_tank < 600) [
+        get_gas
+      ]
+    ]
     ]
   ]
   repeat 1 [ ask robots [ fd 0.2 ] display ]
@@ -356,32 +289,6 @@ to go_objets_collections
   tick
 end
 
-<<<<<<< HEAD
-to go
-  ask robots [
-    flock
-    if (gasBool) [
-      set gas_tank (gas_tank - 1)
-      if (gas_tank < 0) [
-        die
-      ]
-      if (gas_tank < 600) [
-        get_gas
-      ]
-    ]
-  ]
-
-
-  ;; the following line is used to make the turtles
-  ;; animate more smoothly.
-  repeat 1 [ ask robots [ fd 0.2 ] display ]
-  ;; for greater efficiency, at the expense of smooth
-  ;; animation, substitute the following line instead:
-  ;;   ask turtles [ fd 1 ]
-  tick
-end
-=======
->>>>>>> 3fdae3563ab00edc98857787de698726a97d586b
 
 to flock_objets  ;; turtle procedure
   find-flockmates
@@ -472,17 +379,10 @@ to find-pickups
   set pickups warehouses in-radius vision_obj with [color = [color_obj] of myself]
 end
 
-<<<<<<< HEAD
 to find-stations
   set gasStations stations in-radius vision_obj
 end
 
-to find-nearest-neighbor ;; turtle procedure
-  set nearest-neighbor min-one-of flockmates [distance myself]
-end
-
-=======
->>>>>>> 3fdae3563ab00edc98857787de698726a97d586b
 ;;; SEPARATE
 
 to separate  ;; turtle procedure
@@ -737,8 +637,8 @@ SLIDER
 population
 population
 1.0
-1000.0
-102.0
+300
+159.0
 1.0
 1
 NIL
@@ -753,7 +653,7 @@ max-align-turn
 max-align-turn
 0.0
 20.0
-7.25
+11.25
 0.25
 1
 degrees
@@ -768,7 +668,7 @@ vision
 vision
 0.0
 40
-15.0
+9.0
 0.5
 1
 patches
@@ -783,7 +683,7 @@ minimum-separation
 minimum-separation
 0.0
 10
-5.0
+3.0
 0.25
 1
 patches
@@ -828,11 +728,7 @@ separationWeight
 separationWeight
 0
 10
-<<<<<<< HEAD
 2.0
-=======
-6.0
->>>>>>> 3fdae3563ab00edc98857787de698726a97d586b
 1
 1
 NIL
@@ -847,7 +743,7 @@ vision_obj
 vision_obj
 1
 20
-12.5
+11.0
 0.5
 1
 patches
@@ -880,7 +776,7 @@ nb_obj
 nb_obj
 0
 200
-50.0
+0.0
 1
 1
 NIL
@@ -931,17 +827,21 @@ group_objects
 1
 -1000
 
-<<<<<<< HEAD
 SLIDER
-1185
-380
-1357
-413
+1127
+465
+1299
+498
 gas_station_number
 gas_station_number
 0
 10
-=======
+3.0
+1
+1
+NIL
+HORIZONTAL
+
 SWITCH
 10
 44
@@ -973,14 +873,12 @@ differents_objects
 differents_objects
 1
 5
->>>>>>> 3fdae3563ab00edc98857787de698726a97d586b
-5.0
+0.0
 1
 1
 NIL
 HORIZONTAL
 
-<<<<<<< HEAD
 SWITCH
 1018
 464
@@ -988,10 +886,10 @@ SWITCH
 497
 gasBool
 gasBool
-1
+0
 1
 -1000
-=======
+
 BUTTON
 848
 577
@@ -1008,7 +906,6 @@ NIL
 NIL
 NIL
 1
->>>>>>> 3fdae3563ab00edc98857787de698726a97d586b
 
 @#$#@#$#@
 ## WHAT IS IT?
