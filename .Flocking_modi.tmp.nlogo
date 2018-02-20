@@ -473,7 +473,7 @@ to get_gas
      set size 1
   ]
   ask gasStations[
-    if (distance myself < 3) [
+    if (distance myself < ) [
       ask myself [
         set gas_tank (gas_tank + 2000)
         set size 2
