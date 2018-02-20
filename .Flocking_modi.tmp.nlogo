@@ -86,10 +86,11 @@ end
 
 to spawn-obstacle
   repeat obstacle_number [
-    let x_obs random-xcor
-    let y_obs random-ycor
-    let size_obs ((random 5) + 4)
+    set x_obs random-xcor
+    set y_obs random-ycor
+    set size_obs ((random 5) + 4)
     let good_place false
+    let change true
     while [not good_place][
       set good_place true
       ask turtles[
@@ -171,13 +172,13 @@ to spawn-warehouses
     let x_ware random-xcor
     let y_ware random-ycor
     let good_place false
-    while [not good_place][
+    while [not goodl_place][
       set good_place true
       ask obstacles [
         if ((distancexy x_ware y_ware) < size) [
           set good_place false
-          set x_ware random-xcor
-          set y_ware random-ycor
+          le x_ware random-xcor
+          let y_ware random-ycor
         ]
 
       ]
