@@ -21,8 +21,9 @@ robots-own [
   separate_var       ;; separate vector
   color_obj          ;; color of object that robot is holding, else 0
   choose_one         ;; bool to show center of gravity of flockmate
-  gas_tank
-  gasStations
+  gas_tank           ;; quantity of fuel
+  gasStations        ;; nearby gas station
+  ticks_death        ;; ticks before death
 ]
 
 ;; Patches contains objects
@@ -103,6 +104,7 @@ to spawn-robots
       set color_obj black
       set choose_one false
       set gas_tank ((random 2000) + 600)
+      set ticks_death 5
     ]
   ]
 end
@@ -244,7 +246,10 @@ to go
       if (gasBool) [
         set gas_tank (gas_tank - 1)
         if (gas_tank < 0) [
-          die
+          set shape "fire"
+          set size 3
+          set ticks_death (ticks_death - 1)
+          if (ticks_death = 0)[die]
         ]
         if (gas_tank < 600) [
           get_gas
@@ -261,7 +266,10 @@ to go
       if (gasBool) [
         set gas_tank (gas_tank - 1)
         if (gas_tank < 0) [
-          die
+          set shape "fire"
+          set size 3
+          set ticks_death (ticks_death - 1)
+          if (ticks_death = 0)[die]
         ]
         if (gas_tank < 600) [
           get_gas
@@ -825,7 +833,7 @@ gas_station_number
 gas_station_number
 0
 10
-3.0
+0.0
 1
 1
 NIL
@@ -875,7 +883,7 @@ SWITCH
 77
 gasBool
 gasBool
-1
+0
 1
 -1000
 
@@ -1152,6 +1160,13 @@ Circle -7500403 true true 8 8 285
 Circle -16777216 true false 60 75 60
 Circle -16777216 true false 180 75 60
 Polygon -16777216 true false 150 168 90 184 62 210 47 232 67 244 90 220 109 205 150 198 192 205 210 220 227 242 251 229 236 206 212 183
+
+fire
+false
+0
+Polygon -7500403 true true 151 286 134 282 103 282 59 248 40 210 32 157 37 108 68 146 71 109 83 72 111 27 127 55 148 11 167 41 180 112 195 57 217 91 226 126 227 203 256 156 256 201 238 263 213 278 183 281
+Polygon -955883 true false 126 284 91 251 85 212 91 168 103 132 118 153 125 181 135 141 151 96 185 161 195 203 193 253 164 286
+Polygon -2674135 true false 155 284 172 268 172 243 162 224 148 201 130 233 131 260 135 282
 
 fish
 false
