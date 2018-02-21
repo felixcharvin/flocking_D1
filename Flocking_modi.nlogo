@@ -754,7 +754,7 @@ true
 false
 "" ""
 PENS
-"default" 1.0 0 -16777216 true "" "let coef-align 0\nlet coef-neighbour 0\nask robots [\nif count flockmates > 0 [\n  let mean-sin mean [sin heading] of flockmates\n  let mean-cos mean [cos heading] of flockmates\n  set coef-align coef-align + 1 / (1 + abs (heading - (atan mean-sin mean-cos)))\n]\nset coef-neighbour coef-neighbour + (count flockmates) * (count robots - count flockmates)\n]\nset coef-align (coef-align / count robots)\nset coef-neighbour (coef-neighbour / count robots)\nplot coef-align * coef-neighbour"
+"default" 1.0 0 -16777216 true "" "let coef-align 0\nlet coef-neighbour 0\nask robots [\nif count flockmates > 0 [\n  let mean-sin mean [sin heading] of flockmates\n  let mean-cos mean [cos heading] of flockmates\n  set coef-align coef-align + 1 / (1 + abs (heading - (atan mean-sin mean-cos)))\n]\nset coef-neighbour coef-neighbour + (count flockmates) * (count robots in-radius (2 * minimum-separation) - count flockmates)\n]\nset coef-align (coef-align / count robots)\nset coef-neighbour (coef-neighbour / count robots)\nplot coef-align * coef-neighbour"
 
 SLIDER
 12
