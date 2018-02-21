@@ -758,9 +758,9 @@ PENS
 
 SLIDER
 12
-518
+558
 237
-551
+591
 nb_obj
 nb_obj
 0
@@ -773,9 +773,9 @@ HORIZONTAL
 
 BUTTON
 12
-558
+598
 118
-591
+631
 Spawn object
 spawn_obj
 NIL
@@ -790,9 +790,9 @@ NIL
 
 BUTTON
 118
-558
+598
 238
-591
+631
 Remove objects
 clear_obj
 NIL
@@ -806,10 +806,10 @@ NIL
 1
 
 SWITCH
-243
-481
-468
-514
+12
+485
+237
+518
 group_objects
 group_objects
 1
@@ -855,9 +855,9 @@ center_of_gravity
 
 SLIDER
 12
-481
+521
 237
-514
+554
 differents_objects
 differents_objects
 1
